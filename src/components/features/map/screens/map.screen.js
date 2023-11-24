@@ -15,11 +15,14 @@ const Map = styled(MapView)`
 
 export const MapScreen = ({ navigation }) => {
     const { location } = useContext(LocationContext);
+    console.log(location +"location:");
     const { restaurants = [] } = useContext(RestaurantsContext);
   
     const [latDelta, setLatDelta] = useState(0);
   
     const { lat, lng, viewport } = location;
+    console.log(location +"location:");
+    
   
     useEffect(() => {
       const northeastLat = viewport.northeast.lat;

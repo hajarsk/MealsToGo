@@ -2,6 +2,8 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
+import { AntDesign } from '@expo/vector-icons'; 
+
 
 
 import { SafeArea } from "../components/utility/safe-area.component";
@@ -15,10 +17,10 @@ import { ProfileScreen } from "../components/features/profile/screen/profile.scr
 const Tab = createBottomTabNavigator();
 const Donates="Food Details";
 const TAB_ICON = {
-  Home: "md-home",
-  [Donates]: "md-add-circle",
-  Map: "md-map",
-  Profile: "md-person",
+  Home: "md-home-outline",
+  // [Donates]: "md-add-circle-outline",
+  // Map: "md-map-outline",
+  Profile: "md-person-outline",
 };
 
 
@@ -27,7 +29,7 @@ const createScreenOptions = ({ route }) => {
   return {
     
     tabBarIcon: ({ size, color }) => (
-      <Ionicons name={iconName} size={size} color={color} />
+      <Ionicons name={iconName} size={18} color={color} />
       
     ),
     headerTitleAlign: 'center', // Add this line to center the header title
@@ -41,6 +43,7 @@ const createScreenOptions = ({ route }) => {
 export const AppNavigator = () => (
   <NavigationContainer>
     <Tab.Navigator
+      
       screenOptions={createScreenOptions}
       tabBarOptions={{
         activeTintColor: '#4FAF5A',
@@ -53,8 +56,8 @@ export const AppNavigator = () => (
         name="Home" 
         component={RestaurantsNavigator}
       />
-        <Tab.Screen name= {Donates} component={FoodDonationScreen} />
-      <Tab.Screen name="Map" component={MapScreen} />
+        {/* <Tab.Screen name= {Donates} component={FoodDonationScreen} />
+      <Tab.Screen name="Map" component={MapScreen} /> */}
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   </NavigationContainer>

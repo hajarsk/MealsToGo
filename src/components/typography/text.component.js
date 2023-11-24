@@ -1,7 +1,7 @@
 import styled from "styled-components/native";
 
 const defaultTextStyles = (theme) => `
-  font-family: ${theme.fonts.body};
+  font-family: ${theme.fonts.heading};
   font-weight: ${theme.fontWeights.regular};
   color: ${theme.colors.text.primary};
   flex-wrap: wrap;

@@ -16,12 +16,26 @@ export const Search = () => {
     setSearchKeyword(keyword);
   }, [keyword]);
   return (
-    <SearchContainer>
+    <SearchContainer >
       <Searchbar
         placeholder="Search for a food bank"
+        placeholderTextColor="#878787"
+        inputStyle={{marginTop:-4}}
         value={searchKeyword}
         // Apply custom styles to the Searchbar
-        style={{ borderRadius: 50, backgroundColor: '#ffffff' }}
+        iconColor="#878787"
+        
+        style={{ 
+          borderRadius: 50, 
+          backgroundColor: '#ffffff', 
+          borderColor:'#D6D6D6',
+          borderWidth:1, 
+          height: 50,  
+          marginBottom:-5,
+          
+        
+        }}
+     
         onSubmitEditing={() => {
           search(searchKeyword);
         }}

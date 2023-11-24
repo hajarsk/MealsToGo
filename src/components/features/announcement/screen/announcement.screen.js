@@ -1,19 +1,19 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Divider } from 'react-native-paper';
 
-export const ProfileScreen = () => {
+
+export const AnnouncementScreen = () => {
   return (
     <View style={styles.container}>
       {/* profile header */}
-      <Text style={styles.title}>Joshua</Text>
+      <Text style={styles.title}>Announcement</Text>
       {/* Profile content goes here */}
       <View style={styles.profileSection}>
-        <Text style={styles.profileText}>Username: JohnDoe</Text>
-        <Divider style={styles.divider} />
-        <Text style={styles.profileText}>Email: johndoe@example.com</Text>
-        <Divider style={styles.divider} />
-        {/* Add more profile details */}
+        <Text style={styles.profileText}>food is on its way</Text>
+        
+        
+       
+        {/* Add announcement details */}
       </View>
     </View>
   );

@@ -1,10 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list';
-import DropDownPicker from 'react-native-dropdown-picker';
-
-
-
 
 export const FoodDonationScreen = () => {
   const [selected, setSelected] = useState('');
@@ -12,19 +8,14 @@ export const FoodDonationScreen = () => {
   const [expirationDate, setExpirationDate] = useState('');
   const [pickupTime, setPickupTime] = useState('');
   const [foodConcerns, setFoodConcerns] = useState([]);
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
-  const [items, setItems] = useState([
-    {label: 'Apple', value: 'apple'},
-    {label: 'Banana', value: 'banana'}
-  ]);
+
 
   const handleDonation = () => {
-    console.log(`Open: ${Open}, Value: ${value},Items: ${Items},Selected: ${selected},Quantity: ${quantity}, Expiration Date: ${expirationDate}, Pickup Time: ${pickupTime}, Food Concerns: ${foodConcerns}`);
-   
+    console.log(`Selected: ${selected},Quantity: ${quantity}, Expiration Date: ${expirationDate}, Pickup Time: ${pickupTime}, Food Concerns: ${foodConcerns}`);
+
     setQuantity('');
     setExpirationDate('');
-   
+
   };
 
   const handlePickupTimeChange = (selectedPickupTime) => {
@@ -40,48 +31,41 @@ export const FoodDonationScreen = () => {
   };
 
   const data = [
-    {key:'1', value:'house'},
-    {key:'2', value:'Appliances'},
-    {key:'3', value:'Cameras'},
-    {key:'4', value:'Computers'},
-    {key:'5', value:'Vegetables'},
-    {key:'6', value:'Diary Products'},
-    {key:'7', value:'Drinks'},
+    { key: '1', value: 'house' },
+    { key: '2', value: 'Appliances' },
+    { key: '3', value: 'Cameras' },
+    { key: '4', value: 'Computers' },
+    { key: '5', value: 'Vegetables' },
+    { key: '6', value: 'Diary Products' },
+    { key: '7', value: 'Drinks' },
   ]
 
-     
-  
-    
 
- 
+
+
+
+
   return (
     <View style={styles.container}>
       <View style={styles.formContainer}>
-      {/* food concerns header */}
+        {/* food concerns header */}
 
-      <DropDownPicker
-      open={open}
-      value={value}
-      items={items}
-      setOpen={setOpen}
-      setValue={setValue}
-      setItems={setItems}
-    />
-      <Text style={styles.pickupTimeHeader}>Food Item</Text>
-      
-      <View style={{ paddingBottom: 20 }}>
-      <SelectList 
-        
-        placeholder="Select Item"
-        setSelected={(val) =>  setSelected(val)} 
-        data={data} 
-        save="value"
-        onSelect={() => alert(selected)} 
-      />
-      </View>  
+
+        <Text style={styles.pickupTimeHeader}>Food Item</Text>
+
+        <View style={{ paddingBottom: 20 }}>
+          <SelectList
+
+            placeholder="Select Item"
+            setSelected={(val) => setSelected(val)}
+            data={data}
+            save="value"
+            onSelect={() => alert(selected)}
+          />
+        </View>
 
         {/* food concerns header */}
-        <Text style={styles.pickupTimeHeader}>Food Quantity</Text>   
+        <Text style={styles.pickupTimeHeader}>Food Quantity</Text>
         <TextInput
           style={styles.input}
           placeholder="Eg: 250"
@@ -90,8 +74,8 @@ export const FoodDonationScreen = () => {
           onChangeText={(text) => setQuantity(text)}
         />
 
-          {/* food concerns header */}
-      <Text style={styles.pickupTimeHeader}>Food Expiration Date</Text>
+        {/* food concerns header */}
+        <Text style={styles.pickupTimeHeader}>Food Expiration Date</Text>
         <TextInput
           style={styles.input}
           placeholder="Eg: 2 hours"
@@ -104,7 +88,7 @@ export const FoodDonationScreen = () => {
           Pickup Time
         </Text>
 
-     
+
         {/* pickup time buttons */}
         <View style={styles.foodConcernsButtons}>
           <TouchableOpacity
@@ -125,7 +109,7 @@ export const FoodDonationScreen = () => {
           >
             <Text style={styles.foodConcernButtonText}>10:00 PM</Text>
           </TouchableOpacity>
-          
+
         </View>
         <View style={styles.foodConcernsButtons}>
           <TouchableOpacity
@@ -146,12 +130,12 @@ export const FoodDonationScreen = () => {
           >
             <Text style={styles.foodConcernButtonText}>10:00 PM</Text>
           </TouchableOpacity>
-          
+
         </View>
 
 
-         {/* food concerns header */}
-         <Text style={styles.pickupTimeHeader}>
+        {/* food concerns header */}
+        <Text style={styles.pickupTimeHeader}>
           Food Concerns
         </Text>
 
@@ -178,11 +162,11 @@ export const FoodDonationScreen = () => {
           {/* Other food concerns */}
         </View>
 
-        
+
         <TouchableOpacity style={styles.donationButton} onPress={handleDonation}>
           <Text style={styles.buttonText}>Donate Now</Text>
         </TouchableOpacity>
-        
+
 
       </View>
     </View>
@@ -191,9 +175,9 @@ export const FoodDonationScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor:'white',
+    backgroundColor: 'white',
     flex: 1,
-    paddingTop:30,
+    paddingTop: 30,
     alignItems: 'center',
     paddingHorizontal: 20,
   },
@@ -211,14 +195,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     marginBottom: 20,
-    
+
     paddingLeft: 10,
   },
   donationButton: {
     backgroundColor: '#4FAF5A',
     padding: 15,
-    marginTop:15,
-    borderRadius:50,
+    marginTop: 15,
+    borderRadius: 50,
     alignItems: 'center',
   },
   buttonText: {
@@ -233,7 +217,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingTop: 10,
   },
-  pickupTimeHeader:{
+  pickupTimeHeader: {
     marginBottom: 10,
     color: 'black',
     fontWeight: 'bold',
@@ -244,14 +228,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   pickupTimeButton: {
-    
-      backgroundColor: 'white',
-      borderColor:'grey',
-      borderRadius: 2,
-      padding: 10, 
-      fontWeight: 'bold',
-    
-    
+
+    backgroundColor: 'white',
+    borderColor: 'grey',
+    borderRadius: 2,
+    padding: 10,
+    fontWeight: 'bold',
+
+
   },
   pickupTimeButtonText: {
     color: 'grey',
@@ -262,20 +246,20 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'center',
     marginBottom: 10,
-   
-    
+
+
   },
   foodConcernButton: {
     borderWidth: 1, // Set border width
     borderColor: 'grey', // 
-    paddingHorizontal:20,
+    paddingHorizontal: 20,
     padding: 12,
     borderRadius: 10,
     margin: 8,
   },
   foodConcernButtonText: {
     color: 'grey',
-    
+
   },
 });
 

@@ -4,7 +4,7 @@ import { List } from "react-native-paper";
 
 
 import { RestaurantInfoCard } from "../components/restaurant-info-card.component";
-
+import { MapScreen } from "../../map/screens/map.screen";
 import { SafeArea } from "../../../utility/safe-area.component";
 
 export const RestaurantDetailScreen = ({ route }) => {
@@ -72,6 +72,7 @@ export const RestaurantDetailScreen = ({ route }) => {
           <List.Item title="Fanta" />
         </List.Accordion>
       </ScrollView>
+      {/* <MapScreen></MapScreen> */}
     </SafeArea>
   );
 };

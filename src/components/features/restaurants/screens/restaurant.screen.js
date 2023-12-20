@@ -4,6 +4,9 @@ import styled from "styled-components/native";
 import { ActivityIndicator } from "react-native-paper";
 import { SliderBox } from "react-native-image-slider-box";
 import { MaterialIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { Badge } from 'react-native-paper';
+import { FloatingAction } from "react-native-floating-action";
 
 import { MapScreen } from "../../map/screens/map.screen";
 import { SafeArea } from "../../../utility/safe-area.component";
@@ -54,6 +57,15 @@ export const RestaurantsScreen = ({ navigation }) => {
   const [imageUrls, setImageUrls] = useState([]);
   const [notification, setNotification] = useState("")
 
+  const actions = [
+  
+    {
+      text: "Donate",
+      name: "bt_donate",
+      position: 1
+    }
+  ];
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -72,7 +84,7 @@ export const RestaurantsScreen = ({ navigation }) => {
 
   const ImageSlider = [
     { id: 1, name: 'ImageSlider 1', imageId: 'https://source.unsplash.com/1024x768/?nature' },
-    { id: 2, name: 'ImageSlider 2', imageId: 'https://source.unsplash.com/1024x768/?nature' },
+    { id: 2, name: 'ImageSlider 2', imageId: 'https://imageio.forbes.com/specials-images/imageserve/5fc7349e5aded644c77579cf/ENHYPEN-BORDER---DAY-ONE-online-media-showcase-debut-stage-Seoul-korea-ot7-members/0x0.jpg?format=jpg&crop=1998,1332,x0,y0,safe&width=1440' },
     { id: 3, name: 'ImageSlider 3', imageId: 'https://source.unsplash.com/1024x768/?water' },
     // ... announcement
   ];
@@ -83,6 +95,17 @@ export const RestaurantsScreen = ({ navigation }) => {
     // This function returns an array of image URLs based on the provided IDs
     const imageUrls = await yourApiFunctionToFetchImageUrls(imageIds);
     return imageUrls;
+  };
+
+  //navigate slider to screen
+  const handleImagePress = (index) => {
+    const announcementId = ImageSlider[index].id;
+    navigation.navigate('Announcement', { announcementId });
+  };
+  const CustomSlider = () => {
+    const navigation = useNavigation();
+  
+   
   };
 
   // call user name
@@ -100,21 +123,10 @@ export const RestaurantsScreen = ({ navigation }) => {
     // Extracting image IDs from ImageSlider
     const imageIds = ImageSlider.map((ImageSliders) => ImageSliders.imageId);
 
-    // // Fetch image URLs based on image IDs
-    // const fetchImageUrlsData = async () => {
-    //   try {
-    //     const urls = await fetchImageUrls(imageIds);
-    //     setImageUrls(urls);
-    //   } catch (error) {
-    //     console.error('Error fetching image URLs:', error);
-    //   }
-    // };
-
-    // fetchImageUrlsData();
+  
   }, []);
 
-  // display notification button and direct to noti page
-
+ 
 
   return (
     <SafeArea style={{ backgroundColor: 'white' }}>
@@ -127,14 +139,20 @@ export const RestaurantsScreen = ({ navigation }) => {
 
       <View style={styles.containerHeaderUser}>
         {/* user name */}
-        <Text style={styles.userHeader}>Hi Joshua,</Text>
+        <Text style={styles.userHeader}>Hi {name},</Text>
         <View style={[styles.containerHeaderIcon]}>
+          {/* notification button */}
           <TouchableOpacity
             onPress={() =>
-              navigation.navigate("Announcement")
+              navigation.navigate("Notification")
             }
           >
+            
+           
+            {/* visible={notification > 0} size={20} style={{ marginRight: 8, alignSelf: 'center' }} */}
             <MaterialIcons name="notifications-none" size={26} color="black" />
+            <Badge size={9} style={{ position: 'absolute', top: 3, right: 4 }}></Badge>
+            
           </TouchableOpacity>
         </View>
       </View>
@@ -159,25 +177,16 @@ export const RestaurantsScreen = ({ navigation }) => {
             alignSelf: 'flex-end',
             xIndex: 5,
           }}
+          onCurrentImagePressed={index => handleImagePress(index)}
           sliderBoxHeight={180} // Height of the slider
           parentWidth={359}
           borderRadius={10}
           resizeMode="cover"
-          onCurrentImagePressed={index => console.log(`image ${index} pressed`)}
           dotColor="#4FAF5A"
           dotStyle={{ width: 20, height: 5, marginHorizontal: -7 }}
           inactiveDotColor="#e8e8e8"// Light grey- #E8E8E8, GREY - #90A4AE
           autoplay
           circleLoop />
-        {/* Button component
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("Announcement")
-          }}
-          style={styles.donationButton} 
-        >
-          <Text style={styles.buttonText}>Your Button Text</Text>
-        </TouchableOpacity> */}
       </View>
       <View style={styles.containerHeaderUser}>
         <Text style={styles.foodbankHeader}>Foodbank</Text>
@@ -202,6 +211,14 @@ export const RestaurantsScreen = ({ navigation }) => {
         }}
         keyExtractor={(item) => item.name}
       />
+      <View style={styles.container}>
+        
+        <FloatingAction
+          actions={actions}
+          onPressItem={() => navigation.navigate("DonationDetails")}
+          color={'#4FAF5A'}
+        />
+      </View>
     </SafeArea>
   );
 };

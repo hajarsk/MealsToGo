@@ -10,8 +10,8 @@ export const Icon = styled.Image`
 
 export const RestaurantCard = styled(View)`
   background-color: ${(props) => props.theme.colors.bg.primary};
-  margin-bottom: 10px;
-  width: 200px;
+  margin-bottom: -10px;
+  width: 190px;
   height: 230px;
   
 
@@ -20,8 +20,9 @@ export const RestaurantCard = styled(View)`
 export const RestaurantCardCover = styled(Card.Cover)`
   padding-vertical: ${(props) => props.theme.space[3]};
   height: 150px;
+  width: 170px;
   background-color: ${(props) => props.theme.colors.bg.primary};
-  padding-horizontal: ${(props) => props.theme.space[3]};
+  margin-horizontal: ${(props) => props.theme.space[3]};
 
 `;
 

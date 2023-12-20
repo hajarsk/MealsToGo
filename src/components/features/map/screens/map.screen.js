@@ -1,12 +1,9 @@
-import React, { useContext, useState, useEffect } from "react";
-import MapView, {Callout, Marker} from "react-native-maps";
+import React, { useEffect, useState } from "react";
+import { View, Text} from 'react-native';
+import MapView, {Polyline, Marker} from "react-native-maps";
 import styled from "styled-components/native";
+import * as Location from 'expo-location';
 
-import { LocationContext } from "../../../../services/location/location.context";
-import { RestaurantsContext } from "../../../../services/restaurants/restaurants.context";
-
-import { Search } from "../components/search.component";
-import { MapCallout } from "../components/map-callout.component";
 
 const Map = styled(MapView)`
   height: 100%;
@@ -14,57 +11,57 @@ const Map = styled(MapView)`
 `;
 
 export const MapScreen = ({ navigation }) => {
-    const { location } = useContext(LocationContext);
-    console.log(location +"location:");
-    const { restaurants = [] } = useContext(RestaurantsContext);
   
-    const [latDelta, setLatDelta] = useState(0);
-  
-    const { lat, lng, viewport } = location;
-    console.log(location +"location:");
-    
-  
-    useEffect(() => {
-      const northeastLat = viewport.northeast.lat;
-      const southwestLat = viewport.southwest.lat;
-  
-      setLatDelta(northeastLat - southwestLat);
-    }, [location, viewport]);
-  
+  const [currentLocation, setCurrentLocation] = useState({
+    latitude: 0,
+    longitude: 0,
+  });
+  console.log(currentLocation.latitude);
+  console.log(currentLocation.longitude);
+
+
+  const setupGeofence = async () => {
+    // Get the user's current location
+    const { status } = await Location.requestForegroundPermissionsAsync();
+
+    if (status !== 'granted') {
+      console.log('Location permission denied');
+      return;
+    }
+
+    const location = await Location.getCurrentPositionAsync();
+    setCurrentLocation(location.coords)
+  }
+
+  useEffect(() => {
+    setupGeofence();
+
+  });
+
     return (
       <>
-        <Search />
         <Map
           region={{
-            latitude: lat,
-            longitude: lng,
-            latitudeDelta: latDelta,
-            longitudeDelta: 0.02,
+            latitude: 2.9955572872315868,
+            longitude: 101.70888245173745,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
           }}
+          
         >
-          {restaurants.map((restaurant) => {
-            return (
-                <Marker
-                  key={restaurant.name}
-                  title={restaurant.name}
-                  coordinate={{
-                    latitude: restaurant.geometry.location.lat,
-                    longitude: restaurant.geometry.location.lng,
-                  }}
-                  >
-              <Callout
-                onPress={() =>
-                  navigation.navigate("RestaurantDetail", {
-                    restaurant,
-                  })
-                }
-              >
-                <MapCallout restaurant={restaurant} />
-              </Callout>
-            </Marker>
-          );
-        })}
-      </Map>
-    </>
+          <Marker
+            title="Kolej Canselor"
+            coordinate={{
+              latitude: currentLocation.latitude,
+              longitude: currentLocation.longitude,
+            }}
+
+          >
+            
+          </Marker>
+         
+
+        </Map>
+      </>
   );
 };

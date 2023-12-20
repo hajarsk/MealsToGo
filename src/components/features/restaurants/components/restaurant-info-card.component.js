@@ -44,6 +44,7 @@ export const RestaurantInfoCard = ({ checkpoint = {} }) => {
 
   const ProgressBarSlot = () => (
     <ProgressBar progress={progressRatio} theme={{ colors: { primary: '#4FAF5A' } }} />
+    
   );
 
 
@@ -59,9 +60,11 @@ export const RestaurantInfoCard = ({ checkpoint = {} }) => {
 
           </SectionEnd>
         </Section>
-        <Slot><Text style={{ alignSelf: 'flex-end', fontSize: 12, marginTop: 8, color: '#878787' }}>{ratioString}</Text></Slot>
+        <Slot><Text style={{ marginRight:-8,alignSelf: 'flex-end', fontSize: 12, marginTop: 8, color: '#878787' }}>{ratioString}</Text></Slot>
         {/* progress bar */}
-        <ProgressBarSlot></ProgressBarSlot>
+        <View style={{ width: 167, borderRadius: 10, overflow: 'hidden' }}>
+        <ProgressBarSlot ></ProgressBarSlot>
+        </View>
         <SectionEnd>
           <Spacer size="large">
             <Spacer position="left" size="large">

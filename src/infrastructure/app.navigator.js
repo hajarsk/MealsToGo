@@ -16,7 +16,6 @@ const Tab = createBottomTabNavigator();
 
 const TAB_ICON = {
   Home: "home",
-  Map: "md-map-outline",
   Scan: "qr-code-scanner",
   Profile: "user-o",
   Delivery:"delivery-dining"
@@ -38,12 +37,7 @@ const createScreenOptions = ({ route }) => {
     tabBarIconComponent = ({ color }) => (
       <FontAwesome name={TAB_ICON[route.name]} size={22} color={color} />
     );
-  } else if (route.name === 'Map') {
-    
-    tabBarIconComponent = ({ color }) => (
-      <Ionicons name={TAB_ICON[route.name]} size={22} color={color} />
-    );
-  }else if (route.name === 'Delivery') {
+  } else if (route.name === 'Delivery') {
     
     tabBarIconComponent = ({ color }) => (
       <MaterialIcons name={TAB_ICON[route.name]} size={24} color={color} />
@@ -80,7 +74,7 @@ export const AppNavigator = () => (
         {/* <Tab.Screen name= {Donates} component={FoodDonationScreen} /> */}
       <Tab.Screen name="Scan" component={ScanScreen} />
       
-      <Tab.Screen name="Map" component={MapScreen} />
+      
       <Tab.Screen name="Delivery" component={TrackDeliveryScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen}  />
     </Tab.Navigator>

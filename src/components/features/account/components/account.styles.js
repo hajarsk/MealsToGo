@@ -19,23 +19,31 @@ export const AccountCover = styled.View`
 `;
 
 export const AccountContainer = styled.View`
-  background-color: rgba(255, 255, 255, 0.7);
-  padding: ${(props) => props.theme.space[4]};
-  margin-top: ${(props) => props.theme.space[2]};
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: ${(props) => props.theme.space[3]};
+  margin-top: ${(props) => props.theme.space[3]};
+  border-radius: 20px;
 `;
 
 export const AuthButton = styled(Button).attrs({
-  color: colors.brand.primary,
+
 })`
   padding: ${(props) => props.theme.space[2]};
+  background-color: '#4FAF5A';
 `;
 
 export const AuthInput = styled(TextInput)`
   width: 300px;
+  backgroundColor: transparent;
+  font-size: 15px;
+  
 `;
 
 export const Title = styled(Text)`
   font-size: 30px;
+  font-weight: bold;
+ 
+  padding-bottom:5px;
 `;
 
 export const ErrorContainer = styled.View`

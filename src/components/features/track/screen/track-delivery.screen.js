@@ -4,6 +4,9 @@ import { Divider,Button, Card } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import { TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { get, ref } from 'firebase/database';
+import { FIREBASE_DATABASE } from '../../../../config/firebase';
+
 
 
 export const TrackDeliveryScreen = () => {
@@ -80,13 +83,13 @@ export const TrackDeliveryScreen = () => {
       <View style={styles.bodySection}>
         <Text style={styles.headerStyle}>Delivery Details</Text>
         <Text style={styles.subHeaderStyle}>Deliver food from:</Text>
-        <Text style={styles.bodyStyle}>Hotel Le Meridien</Text>
+        <Text style={styles.bodyStyle}>Le Méridien Putrajaya</Text>
         <Divider style={styles.divider} />
         <Text style={styles.subHeaderStyle}>Delivery address:</Text>
         <Text style={styles. bodyStyle}>Kolej Canselor, Universiti Putra Malaysia 43400 Serdang, Selangor</Text>
         <Divider style={styles.divider} />
         <Text style={styles.subHeaderStyle}>Items:</Text>
-        <Text style={styles. bodyStyle}>50x Nasi Lemak</Text>
+        <Text style={styles. bodyStyle}>50x Nasi Berlauk</Text>
         
           
       </View>

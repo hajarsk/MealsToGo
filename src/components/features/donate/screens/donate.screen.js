@@ -1,19 +1,53 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list';
+import { FIREBASE_DATABASE } from '../../../../config/firebase';
+import { push, ref as databaseRef } from 'firebase/database';
+import { getAuth } from 'firebase/auth';
+import { setupNotification } from '../../restaurants/components/notification.component';
 
-export const FoodDonationScreen = () => {
+export const FoodDonationScreen = ({ navigation }) => {
   const [selected, setSelected] = useState('');
   const [quantity, setQuantity] = useState('');
+  const [weight, setWeight] = useState('');
   const [expirationDate, setExpirationDate] = useState('');
   const [pickupTime, setPickupTime] = useState('');
   const [foodConcerns, setFoodConcerns] = useState([]);
 
+  const sendDonationDetailsToDatabase = async () => {
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      const userId = user.uid;
+      const userName = user.displayName;
+
+      const postData = {
+        userId: userId,
+        userName: userName,
+        foodItem: selected,
+        quantity: quantity,
+        weight: weight,
+        expirationDate: expirationDate,
+        pickupTime: pickupTime,
+        foodConcerns: foodConcerns
+      }
+      const dbRef = databaseRef(FIREBASE_DATABASE, "Donation_Details")
+      await push(dbRef, postData)
+      console.log("data send successful!")
+     
+      navigation.goBack()
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   const handleDonation = () => {
-    console.log(`Selected: ${selected},Quantity: ${quantity}, Expiration Date: ${expirationDate}, Pickup Time: ${pickupTime}, Food Concerns: ${foodConcerns}`);
-
+    console.log(`Selected: ${selected},Quantity: ${quantity}, Weight: ${weight},Expiration Date: ${expirationDate}, Pickup Time: ${pickupTime}, Food Concerns: ${foodConcerns}`);
+    sendDonationDetailsToDatabase()
+    setupNotification()
     setQuantity('');
+    setWeight('');
     setExpirationDate('');
 
   };
@@ -31,13 +65,13 @@ export const FoodDonationScreen = () => {
   };
 
   const data = [
-    { key: '1', value: 'house' },
-    { key: '2', value: 'Appliances' },
-    { key: '3', value: 'Cameras' },
-    { key: '4', value: 'Computers' },
-    { key: '5', value: 'Vegetables' },
-    { key: '6', value: 'Diary Products' },
-    { key: '7', value: 'Drinks' },
+    { key: '1', value: 'Nasi Berlauk' },
+    { key: '2', value: 'Kuih Muih' },
+    { key: '3', value: 'Nasi/Mee/Bihun/Kueytiaw Goreng' },
+    { key: '4', value: 'Berkuah (laksa, mee kari, bihun sup dll)' },
+    { key: '5', value: 'Goreng-goreng/Bakar-bakar' },
+    { key: '6', value: 'Westen (pizza/spagetti,dll)' },
+    { key: '7', value: 'Lain-lain' },
   ]
 
 
@@ -60,11 +94,11 @@ export const FoodDonationScreen = () => {
             setSelected={(val) => setSelected(val)}
             data={data}
             save="value"
-            onSelect={() => alert(selected)}
+           
           />
         </View>
 
-        {/* food concerns header */}
+        {/* food Quantity header */}
         <Text style={styles.pickupTimeHeader}>Food Quantity</Text>
         <TextInput
           style={styles.input}
@@ -74,7 +108,17 @@ export const FoodDonationScreen = () => {
           onChangeText={(text) => setQuantity(text)}
         />
 
-        {/* food concerns header */}
+        {/* food weight header */}
+        <Text style={styles.pickupTimeHeader}>Food Weight (kg)</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Eg: 0.5"
+          keyboardType="numeric"
+          value={weight}
+          onChangeText={(text) => setWeight(text)}
+        />
+
+        {/* Food Expiration Date header */}
         <Text style={styles.pickupTimeHeader}>Food Expiration Date</Text>
         <TextInput
           style={styles.input}
@@ -89,49 +133,29 @@ export const FoodDonationScreen = () => {
         </Text>
 
 
-        {/* pickup time buttons */}
+        {/* food concern buttons */}
         <View style={styles.foodConcernsButtons}>
           <TouchableOpacity
             style={styles.foodConcernButton}
-            onPress={() => handlePickupTimeChange('Morning')}
+            onPress={() => handlePickupTimeChange('10:00 AM')}
           >
             <Text style={styles.foodConcernButtonText}>10:00 AM</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.foodConcernButton}
-            onPress={() => handlePickupTimeChange('Evening')}
+            onPress={() => handlePickupTimeChange('4:00 PM')}
           >
             <Text style={styles.foodConcernButtonText}>4:00 PM</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.foodConcernButton}
-            onPress={() => handlePickupTimeChange('Night')}
+            onPress={() => handlePickupTimeChange('10:00 PM')}
           >
             <Text style={styles.foodConcernButtonText}>10:00 PM</Text>
           </TouchableOpacity>
 
         </View>
-        <View style={styles.foodConcernsButtons}>
-          <TouchableOpacity
-            style={styles.foodConcernButton}
-            onPress={() => handlePickupTimeChange('Morning')}
-          >
-            <Text style={styles.foodConcernButtonText}>10:00 AM</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.foodConcernButton}
-            onPress={() => handlePickupTimeChange('Evening')}
-          >
-            <Text style={styles.foodConcernButtonText}>4:00 PM</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.foodConcernButton}
-            onPress={() => handlePickupTimeChange('Night')}
-          >
-            <Text style={styles.foodConcernButtonText}>10:00 PM</Text>
-          </TouchableOpacity>
-
-        </View>
+        
 
 
         {/* food concerns header */}
@@ -143,28 +167,39 @@ export const FoodDonationScreen = () => {
         <View style={styles.foodConcernsButtons}>
           <TouchableOpacity
             style={styles.foodConcernButton}
-            onPress={() => handleFoodConcernChange('Dairy')}
-          >
-            <Text style={styles.foodConcernButtonText}>Dairy</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.foodConcernButton}
-            onPress={() => handleFoodConcernChange('Egg')}
-          >
-            <Text style={styles.foodConcernButtonText}>Egg</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.foodConcernButton}
             onPress={() => handleFoodConcernChange('Gluten')}
           >
             <Text style={styles.foodConcernButtonText}>Gluten</Text>
           </TouchableOpacity>
-          {/* Other food concerns */}
+          <TouchableOpacity
+            style={styles.foodConcernButton}
+            onPress={() => handleFoodConcernChange('Lactose')}
+          >
+            <Text style={styles.foodConcernButtonText}>Lactose</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.foodConcernButton}
+            onPress={() => handleFoodConcernChange('Vegetarian')}
+          >
+            <Text style={styles.foodConcernButtonText}>Vegetarian</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.foodConcernButton}
+            onPress={() => handleFoodConcernChange('Nut')}
+          >
+            <Text style={styles.foodConcernButtonText}>Nut</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.foodConcernButton}
+            onPress={() => handleFoodConcernChange('Allergen')}
+          >
+            <Text style={styles.foodConcernButtonText}>Allergen</Text>
+          </TouchableOpacity>
         </View>
 
 
         <TouchableOpacity style={styles.donationButton} onPress={handleDonation}>
-          <Text style={styles.buttonText}>Donate Now</Text>
+          <Text style={styles.buttonText}>Submit</Text>
         </TouchableOpacity>
 
 
@@ -246,8 +281,6 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'center',
     marginBottom: 10,
-
-
   },
   foodConcernButton: {
     borderWidth: 1, // Set border width

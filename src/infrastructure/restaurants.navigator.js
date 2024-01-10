@@ -9,10 +9,11 @@ import { RestaurantsScreen } from "../components/features/restaurants/screens/re
 import { RestaurantDetailScreen } from "../components/features/restaurants/screens/restaurant-detail.screen";
 import { AnnouncementScreen } from "../components/features/announcement/screen/announcement.screen";
 import { FoodDonationScreen } from "../components/features/donate/screens/donate.screen";
-import { NotificationScreen } from "../components/features/notification/screen/notification.screen";
+import { Notification } from "../components/features/restaurants/screens/notification.screen";
 import { ScanScreen } from "../components/features/scan/screen/scan.screen";
 import { TrackDeliveryScreen } from "../components/features/track/screen/track-delivery.screen";
 import { MapScreen } from "../components/features/map/screens/map.screen";
+import { DeliveryDetailsScreen } from "../components/features/delivery/screen/delivery-detail.screen";
 
 //drawer and card
 const RestaurantStack = createStackNavigator();
@@ -44,7 +45,11 @@ export const RestaurantsNavigator = () => {
       />
       <RestaurantStack.Screen
         name="Notification"
-        component={NotificationScreen}
+        component={Notification}
+      />
+      <RestaurantStack.Screen
+        name="DeliveryDetails"
+        component={DeliveryDetailsScreen}
       />
       <RestaurantStack.Screen
         name="DonationDetails"

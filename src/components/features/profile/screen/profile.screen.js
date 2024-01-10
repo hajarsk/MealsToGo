@@ -1,24 +1,68 @@
-import React,{useState, useEffect}from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
-import { Divider,Button, Card,List } from 'react-native-paper';
+import { Divider, Button, Card, List } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import { TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { getAuth,onAuthStateChanged } from 'firebase/auth';
 
+const fetchCollegeData = async () => {
+  const dbRef = ref(FIREBASE_DATABASE, 'checkpoint'); // Assuming 'posts' is your Firebase collection name
+  const snapshot = await get(dbRef);
+  if (snapshot.exists()) {
+    return Object.values(snapshot.val()); // Assuming your data is stored as an object
+  } else {
+    return [];
+  }
+};
 
 export const ProfileScreen = () => {
   const [profileImage, setProfileImage] = useState("");
   const [expanded, setExpanded] = useState(true);
-
+  const [donation, setDonation] = useState([]);
+  const navigation = useNavigation();
+  const user = getAuth();
   const handlePress = () => setExpanded(!expanded);
+  const [name, setName] = useState("");
+  const [role, setRole] = useState("");
+
+  
+  useEffect(() => {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            setName(user.displayName);
+            setRole(user.photoURL);
+            console.log(name,role)
+        }
+    });
+}, []);
+  
+  const actions = [
+  
+    {
+      text: "Donate",
+      name: "bt_donate",
+      position: 1
+    }
+  ];
 
   useEffect(() => {
-    (async () => {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status !== 'granted') {
-        console.log('Permission denied!');
+    const fetchData = async () => {
+      try {
+        const data = await fetchCollegeData();
+        console.log('Fetched data:', data); // Log the fetched data
+        setCheckpoint(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setIsLoading(false);
       }
-    })();
+    };
+
+    fetchData();
   }, []);
+
 
   const handleImagePicker = async () => {
     try {
@@ -34,43 +78,49 @@ export const ProfileScreen = () => {
       console.error('ImagePicker Error: ', error);
     }
   };
-  
+
 
   return (
     <View style={styles.container}>
 
       {/* profile header */}
       <View style={styles.headerSection}>
-      <Card style={{ flex: 1, backgroundColor:'#f5f5f5', justifyContent: 'center', alignItems: 'center' }}>
+        <Card style={{ flex: 1, backgroundColor: '#f5f5f5', justifyContent: 'center', alignItems: 'center' }}>
           <Card.Content >
-         <TouchableOpacity onPress={handleImagePicker} >
-          {profileImage && <Image source={{ uri: profileImage }} style={styles.profileImage} />}
-          <Button title="Select Profile Picture" onPress={handleImagePicker} />
-         </TouchableOpacity>
-         <View style={styles.titleContainer}>
-          <Text style={styles.title}>Joshua Hong</Text>
-          <Text style={styles.titleEmail}>207620@student.upm.edu.my</Text>
-         </View>
-         </Card.Content>
-       </Card>
+            <TouchableOpacity onPress={handleImagePicker} >
+              {profileImage && <Image source={{ uri: profileImage }} style={styles.profileImage} />}
+              <Button title="Select Profile Picture" onPress={handleImagePicker} />
+            </TouchableOpacity>
+            <View style={styles.titleContainer}>
+              <Text style={styles.title}>{name}</Text>
+              <Text style={styles.titleEmail}>{role}</Text>
+            </View>
+          </Card.Content>
+        </Card>
       </View>
 
       <View style={styles.thickLine} />
 
-      <View style={styles.bodySection}>        
-      <Text style={styles.headerStyle}>Profile Info</Text>
-      <Divider style={styles.divider} />    
-         
-        <Text style={styles.bodyStyle}>My Role</Text>
-        <Divider style={styles.divider} />        
-        <Text style={styles. bodyStyle}>Settings</Text>
-        <Divider style={styles.divider} />        
-        <Text style={styles. bodyStyle}>About Us</Text>
-        <Divider style={styles.divider} />        
-        <Text style={styles. bodyStyle}>Logout</Text>
+      <View style={styles.bodySection}>
+        
+          <Text style={styles.headerStyle}>Profile Info</Text>
+        
+        <Divider style={styles.divider} />
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("RestaurantDetail", {checkpoint:donation})
+          }>
+        <Text style={styles.bodyStyle}>My Donation</Text>
+        </TouchableOpacity>
+        <Divider style={styles.divider} />
+        <Text style={styles.bodyStyle}>Settings</Text>
+        <Divider style={styles.divider} />
+        <Text style={styles.bodyStyle}>About Us</Text>
+        <Divider style={styles.divider} />
+        <Text style={styles.bodyStyle}>Logout</Text>
       </View>
 
-      
+
     </View>
   );
 };
@@ -84,79 +134,79 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: 'bold',
-   
-    color:'#4FAF5A', 
-   
+
+    color: '#4FAF5A',
+
   },
   titleEmail: {
     fontSize: 16,
     fontWeight: 'medium',
-    marginBottom: 5,    
-    alignSelf:'center',
-    
-    
+    marginBottom: 5,
+    alignSelf: 'center',
+
+
   },
   bodySection: {
     width: '100%',
-    backgroundColor:'white',    
-    marginLeft:30,
-    marginTop:20    
+    backgroundColor: 'white',
+    marginLeft: 30,
+    marginTop: 20
   },
   profileText: {
     fontSize: 16,
     marginBottom: 10,
-    paddingLeft:20,
-    
+    paddingLeft: 20,
+
   },
   divider: {
     marginVertical: 8,
-    width:'90%',
-    alignContent:'center',
-   
+    width: '90%',
+    alignContent: 'center',
+
   },
   profileImage: {
     width: 80,
-    height:80,
-    borderRadius: 75,   
-    alignSelf:'center'
+    height: 80,
+    borderRadius: 75,
+    alignSelf: 'center'
   },
   headerSection: {
     flexDirection: 'row',
     alignItems: 'center',
     margin: 20,
-    color:'#4FAF5A',    
+    color: '#4FAF5A',
   },
   titleContainer: {
     flexDirection: 'column',
-    marginTop:-30,
-   alignItems: 'center',
+    marginTop: -30,
+    alignItems: 'center',
   },
   bodySection: {
     width: '100%',
-    paddingLeft:25,
-    marginTop:-5,
-    
+    paddingLeft: 25,
+    marginTop: -5,
+
   },
   headerStyle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color:'#4FAF5A',    
-    marginBottom:10
+    color: '#4FAF5A',
+    marginBottom: 10
   },
   subHeaderStyle: {
     fontSize: 16,
-    
+
   },
-  bodyStyle: {    
-    marginBottom: 5, 
-    fontSize: 16,    
-   
-    
+  bodyStyle: {
+    marginBottom: 5,
+    fontSize: 16,
+
+
   },
   divider: {
     marginVertical: 12,
-    width:'90%',
-    alignContent:'center',   
+    width: '90%',
+    alignContent: 'center',
   },
   thickLine: {
     borderBottomWidth: 8,
@@ -164,5 +214,5 @@ const styles = StyleSheet.create({
     marginVertical: 25,
     width: '100%',
   },
-  
+
 });

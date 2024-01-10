@@ -2,17 +2,35 @@ import React from "react";
 import { SafeAreaView,  StyleSheet, View,Image, Text} from "react-native";
 import { ProgressBar, Divider } from "react-native-paper";
 import { Slot } from "../components/restaurant-info-card.styles";
+import { ref, get } from 'firebase/database';
+import { FIREBASE_DATABASE } from '../../../../config/firebase';
+
+
+fetchDonationDetails = async() =>{
+  try{
+    const dbRef = ref(FIREBASE_DATABASE,"Donation_Details")
+    const snapshot = await get(dbRef) 
+    if(snapshot.exists()){
+      const allData = Object.values(snapshot.val())
+      return allData 
+    }else{
+      return []
+    }
+  }catch(error){
+      console.error(error)
+  }
+ }
 
 export const RestaurantDetailScreen = ({ route }) => {
   const { checkpoint } = route.params;
-  const ratioString = `${checkpoint.available}/${checkpoint.total}`; // Display the ratio as a string in the format `available/total`
+  const ratioString =  `${checkpoint.available}/${checkpoint.total}`; // Display the ratio as a string in the format `available/total`
 
 
   //available food slot left
   // Calculate progress ratio
   const progressRatio = checkpoint.total > 0 ? checkpoint.available / checkpoint.total : 0;
 
-  const ProgressBarSlot = () => (
+  const ProgressBarSlot = (progressRatio) => (
     <ProgressBar progress={progressRatio} theme={{ colors: { primary: '#4FAF5A' } }} />
   );
   
@@ -43,7 +61,7 @@ export const RestaurantDetailScreen = ({ route }) => {
         <Text style={styles. bodyStyle}>Kolej Canselor, Universiti Putra Malaysia 43400 Serdang, Selangor</Text>
         <Divider style={styles.divider} />
         <Text style={styles.subHeaderStyle}>Items:</Text>
-        <Text style={styles. bodyStyle}>50x Nasi Lemak</Text>
+        <Text style={styles. bodyStyle}>50x Nasi Berlauk</Text>
         
           
       </View>

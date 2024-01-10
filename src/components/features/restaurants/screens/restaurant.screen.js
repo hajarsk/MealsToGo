@@ -19,6 +19,7 @@ import { FIREBASE_DATABASE } from '../../../../config/firebase';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 
+
 const fetchCollegeData = async () => {
   const dbRef = ref(FIREBASE_DATABASE, 'checkpoint'); // Assuming 'posts' is your Firebase collection name
   const snapshot = await get(dbRef);
@@ -52,11 +53,23 @@ const LoadingContainer = styled.View`
 
 export const RestaurantsScreen = ({ navigation }) => {
   const [name, setName] = useState("");
+  const [role, setRole] = useState("");
   const [checkpoints, setCheckpoint] = useState([])
   const [isLoading, setIsLoading] = useState(true);
   const [imageUrls, setImageUrls] = useState([]);
   const [notification, setNotification] = useState("")
 
+  useEffect(() => {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            setName(user.displayName);
+            setRole(user.photoURL);
+            console.log(name,role)
+        }
+    });
+}, []);
+  
   const actions = [
   
     {
@@ -83,9 +96,9 @@ export const RestaurantsScreen = ({ navigation }) => {
   }, []);
 
   const ImageSlider = [
-    { id: 1, name: 'ImageSlider 1', imageId: 'https://source.unsplash.com/1024x768/?nature' },
-    { id: 2, name: 'ImageSlider 2', imageId: 'https://imageio.forbes.com/specials-images/imageserve/5fc7349e5aded644c77579cf/ENHYPEN-BORDER---DAY-ONE-online-media-showcase-debut-stage-Seoul-korea-ot7-members/0x0.jpg?format=jpg&crop=1998,1332,x0,y0,safe&width=1440' },
-    { id: 3, name: 'ImageSlider 3', imageId: 'https://source.unsplash.com/1024x768/?water' },
+    { id: 1, name: 'ImageSlider 1', imageId: 'https://firebasestorage.googleapis.com/v0/b/mealstogo-df673.appspot.com/o/agihan_foodbank.jpg?alt=media&token=265a8342-b684-4fc7-85b4-0ed13fac0f62' },
+    { id: 2, name: 'ImageSlider 2', imageId: 'https://firebasestorage.googleapis.com/v0/b/mealstogo-df673.appspot.com/o/kotak_foodbank_crop.jpg?alt=media&token=bf7628fc-380c-4908-b2eb-6d3301a0e788' },
+    { id: 3, name: 'ImageSlider 3', imageId: 'https://firebasestorage.googleapis.com/v0/b/mealstogo-df673.appspot.com/o/myfundaction_foodbank.jpeg?alt=media&token=58ae17cd-521f-4b29-ac7a-57e2a5e45475' },
     // ... announcement
   ];
 
@@ -108,16 +121,7 @@ export const RestaurantsScreen = ({ navigation }) => {
    
   };
 
-  // call user name
-  useEffect(() => {
-    const auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setName(user.displayName);
-
-      }
-    });
-  }, []);
+  
 
   useEffect(() => {
     // Extracting image IDs from ImageSlider
@@ -160,7 +164,7 @@ export const RestaurantsScreen = ({ navigation }) => {
       {/* user role */}
       <View style={styles.containerHeaderRole}>
         <Text style={styles.roleHeader}>You are a </Text>
-        <Text style={styles.roleHeaderColor}>donor!</Text>
+        <Text style={styles.roleHeaderColor}>{role}!</Text>
       </View>
 
       {/* display search bar */}
@@ -186,10 +190,11 @@ export const RestaurantsScreen = ({ navigation }) => {
           dotStyle={{ width: 20, height: 5, marginHorizontal: -7 }}
           inactiveDotColor="#e8e8e8"// Light grey- #E8E8E8, GREY - #90A4AE
           autoplay
-          circleLoop />
+          circleLoop 
+          />
       </View>
       <View style={styles.containerHeaderUser}>
-        <Text style={styles.foodbankHeader}>Foodbank</Text>
+        <Text style={styles.foodbankHeader}>UPM Food Bank List</Text>
       </View>
       <RestaurantList
         data={checkpoints}
@@ -216,7 +221,7 @@ export const RestaurantsScreen = ({ navigation }) => {
         <FloatingAction
           actions={actions}
           onPressItem={() => navigation.navigate("DonationDetails")}
-          color={'#4FAF5A'}
+          color={''}
         />
       </View>
     </SafeArea>

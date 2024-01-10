@@ -1,4 +1,6 @@
 import React from "react";
+import { StyleSheet } from "react-native";
+import { Button } from "react-native-paper";
 
 import { Spacer } from "../../../spacer/spacer.component";
 import {
@@ -15,23 +17,54 @@ export const AccountScreen = ({ navigation }) => {
       <AccountCover />
       <Title>ShareCare</Title>
       <AccountContainer>
-        <AuthButton
-          icon="lock-open-outline"
+
+        <Button
+          style={styles.loginButton}
+          labelStyle={styles.buttonText}
           mode="contained"
           onPress={() => navigation.navigate("Login")}
         >
           Login
-        </AuthButton>
-        <Spacer size="large">
-          <AuthButton
-            icon="email"
-            mode="contained"
-            onPress={() => navigation.navigate("Register")}
-          >
-            Register
-          </AuthButton>
-        </Spacer>
+        </Button>
+        <Button
+          style={styles.outlinedButton}
+          labelStyle={styles.outlinedButtonText}
+          mode="contained"
+          onPress={() => navigation.navigate("Register")}
+        >
+          Sign Up
+        </Button>
       </AccountContainer>
     </AccountBackground>
   );
 };
+
+const styles = StyleSheet.create({
+  loginButton: {
+    backgroundColor: '#4FAF5A',
+    padding: 5,
+    marginTop: 15,
+    borderRadius: 50,
+    alignItems: 'center',
+    width:300
+    
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+  },
+  outlinedButton: {
+    backgroundColor: 'transparent',
+    borderColor: '#4FAF5A', 
+    borderWidth: 1.5, 
+    padding: 5,
+    marginTop: 15,
+    borderRadius: 50,
+    alignItems: 'center',
+    width:300
+  },
+  outlinedButtonText: {
+    color: '#4FAF5A',
+    fontSize: 16,
+  },
+});

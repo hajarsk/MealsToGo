@@ -82,7 +82,6 @@ export const setupNotification = async () => {
 
     if (snapshot.exists()) {
       const allData = Object.values(snapshot.val());
-      console.log(allData)
       const filteredData = allData[allData.length - 1]
       console.log(allData[allData.length - 1])
         // Trigger the notification for each location in the geofence

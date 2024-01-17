@@ -81,13 +81,13 @@ export const setupNotification = async () => {
 
     if (snapshot.exists()) {
       const allData = Object.values(snapshot.val());
-      const filteredData = allData[allData.length - 1]
-      console.log(allData[allData.length - 1])
-        // Trigger the notification for each location in the geofence
-          await schedulePushNotification(filteredData);
-       console.log("owner post should not get notification about his own post")
-  
-  
+      //const filteredData = allData[allData.length - 1]
+      console.log(allData);
+      // Trigger the notification for each location in the geofence
+      await schedulePushNotification(filteredData);
+      console.log("owner post should not get notification about his own post")
+
+
     } else {
       console.log('Data not found in the database');
     }

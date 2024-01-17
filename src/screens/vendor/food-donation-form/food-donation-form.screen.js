@@ -15,34 +15,50 @@ export const DonationFormScreen = ({ navigation }) => {
   const [pickupTime, setPickupTime] = useState('');
   const [foodConcerns, setFoodConcerns] = useState([]);
 
+  const sendDonationDetailsToDatabase = async () => {
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser;
 
-  const handleDonation = async () => {
-    const auth = getAuth();
-    const user = auth.currentUser;
-    const userId = user.uid;
-    const userName = user.displayName;
+      const userId = user.uid;
+      const userName = user.displayName;
 
-    const postData = {
-      status: "pending",
-      userId: userId,
-      userName: userName,
-      foodItem: selected,
-      quantity: quantity,
-      weight: weight,
-      expirationDate: expirationDate,
-      pickupTime: pickupTime,
-      foodConcerns: foodConcerns
+      const postData = {
+        status:"pending",
+        userId: userId,
+        userName: userName,
+        foodItem: selected,
+        quantity: quantity,
+        weight: weight,
+        expirationDate: expirationDate,
+        pickupTime: pickupTime,
+        foodConcerns: foodConcerns
+      }
+      const dbRef = databaseRef(FIREBASE_DATABASE, "Donation_Details")
+      await push(dbRef, postData)
+      console.log("data send successful!")
+     
+      navigation.goBack()
+    } catch (error) {
+      console.error(error)
     }
-    const dbRef = databaseRef(FIREBASE_DATABASE, "Donation_Details")
-    await push(dbRef, postData)
-    console.log("data send successful!")
+  }
 
+  const handleDonation = () => {
+    console.log(`
+    Selected: ${selected},
+    Quantity: ${quantity}, 
+    Weight: ${weight},
+    Expiration Date: ${expirationDate}, 
+    Pickup Time: ${pickupTime}, 
+    Food Concerns: ${foodConcerns}`);
+    
+    sendDonationDetailsToDatabase()
     setupNotification()
     setQuantity('');
     setWeight('');
     setExpirationDate('');
 
-    navigation.goBack();
   };
 
   const handlePickupTimeChange = (selectedPickupTime) => {
@@ -87,7 +103,7 @@ export const DonationFormScreen = ({ navigation }) => {
             setSelected={(val) => setSelected(val)}
             data={data}
             save="value"
-
+           
           />
         </View>
 
@@ -148,7 +164,7 @@ export const DonationFormScreen = ({ navigation }) => {
           </TouchableOpacity>
 
         </View>
-
+        
 
 
         {/* food concerns header */}

@@ -34,7 +34,7 @@ export const AuthenticationContextProvider = ({children}) => {
     };
 
     //student
-    const onRegisterStudent = async (role,name, email, college, password, repeatedPassword) => {
+    const onRegisterStudent = async (email,password, repeatedPassword) => {
         setIsLoading(true);
         if (password !== repeatedPassword) {
             setError("Error: Passwords do not match");
@@ -42,13 +42,8 @@ export const AuthenticationContextProvider = ({children}) => {
         }
     
         registerRequest(email, password).then(async (u) => {
-            // Update the user's display name and photo URL
-            await updateProfile(u, {
-                displayRole: role,
-                displayName: name,
-                displayCollege: college,
-                
-            });
+            // Update the user's display name and photo URL     
+           
     
             setUser(u);
             setIsLoading(false);
@@ -59,7 +54,7 @@ export const AuthenticationContextProvider = ({children}) => {
     };
 
     //vendor
-    const onRegisterVendor = async (checked,name, email, phoneNumber, brn,password, repeatedPassword, address) => {
+    const onRegisterVendor = async (email,password, repeatedPassword) => {
         setIsLoading(true);
         if (password !== repeatedPassword) {
             setError("Error: Passwords do not match");
@@ -67,15 +62,6 @@ export const AuthenticationContextProvider = ({children}) => {
         }
     
         registerRequest(email, password).then(async (u) => {
-            // Update the user's display name and photo URL
-            await updateProfile(u, {
-                photoURL: checked,
-                displayName: name,
-                phoneNumber: phoneNumber,
-                emailVerified: brn,
-                providerId: address,
-               
-            });
     
             setUser(u);
             setIsLoading(false);
@@ -86,7 +72,7 @@ export const AuthenticationContextProvider = ({children}) => {
     };
 
     //volunteer
-    const onRegisterVolunteer = async (role,name, email, phoneNumber, password, repeatedPassword) => {
+    const onRegisterVolunteer = async (email, password, repeatedPassword) => {
         setIsLoading(true);
         if (password !== repeatedPassword) {
             setError("Error: Passwords do not match");
@@ -94,13 +80,6 @@ export const AuthenticationContextProvider = ({children}) => {
         }
     
         registerRequest(email, password).then(async (u) => {
-            // Update the user's display name and photo URL
-            await updateProfile(u, {
-                photoURL: role,
-                displayName: name,
-                phoneNumber: phoneNumber,
-                
-            });
     
             setUser(u);
             setIsLoading(false);

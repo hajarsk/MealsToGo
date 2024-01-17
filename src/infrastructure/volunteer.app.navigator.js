@@ -1,0 +1,64 @@
+import React from "react";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { AntDesign , FontAwesome } from "@expo/vector-icons";
+
+import { VolunteerNavigator } from "./volunteer.navigator";
+import { VolunteerProfileScreen } from "../screens/volunteer/volunteer-profile/volunteer-profile.screen";
+import { UploadPhotoScreen } from "../screens/volunteer/upload-photo-proof/upload-photo.screen";
+
+
+
+//bottom bar setup on app
+
+const Tab = createBottomTabNavigator();
+
+const TAB_ICON = {
+  Home: "home",
+  Profile: "user-o"
+};
+
+const createScreenOptions = ({ route }) => {
+  let tabBarIconComponent;
+
+  // Conditionally set the icon based on the route name
+ if (route.name === 'Home') {
+    tabBarIconComponent = ({ color }) => (
+      <AntDesign name={TAB_ICON[route.name]} size={24} color={color} />
+    );
+  } else if (route.name === 'Profile') {
+    tabBarIconComponent = ({ color }) => (
+      <FontAwesome name={TAB_ICON[route.name]} size={22} color={color} />
+    );
+  } 
+
+  return {
+    tabBarIcon: tabBarIconComponent,
+    headerTitleAlign: 'center',
+    headerStyle: {
+      elevation: 4,
+    },
+  };
+};
+
+export const VolunteerAppNavigator = () => (
+    <Tab.Navigator
+      
+      screenOptions={createScreenOptions}
+      tabBarOptions={{
+        activeTintColor: '#4FAF5A',
+        inactiveTintColor: "grey",
+        // showLabel: false,//disable icon text
+      }} 
+      tabBarStyle={{
+        borderRadius:60
+      }}
+    >
+      <Tab.Screen
+        options={{headerShown: false }}
+        name="Home" 
+        component={VolunteerNavigator}
+      />
+      <Tab.Screen name="Profile" component={VolunteerProfileScreen}  />
+      <Tab.Screen name="UploadPhoto" component={UploadPhotoScreen}  />
+    </Tab.Navigator>
+);

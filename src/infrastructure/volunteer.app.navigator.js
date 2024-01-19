@@ -5,6 +5,7 @@ import { AntDesign , FontAwesome } from "@expo/vector-icons";
 import { VolunteerNavigator } from "./volunteer.navigator";
 import { VolunteerProfileScreen } from "../screens/volunteer/volunteer-profile/volunteer-profile.screen";
 import { UploadPhotoScreen } from "../screens/volunteer/upload-photo-proof/upload-photo.screen";
+import { MyDeliveryScreen } from "../screens/volunteer/my-delivery/my-delivery.screen";
 
 
 
@@ -14,7 +15,8 @@ const Tab = createBottomTabNavigator();
 
 const TAB_ICON = {
   Home: "home",
-  Profile: "user-o"
+  Profile: "user-o",
+  MyDelivery: "motorcycle"
 };
 
 const createScreenOptions = ({ route }) => {
@@ -29,7 +31,12 @@ const createScreenOptions = ({ route }) => {
     tabBarIconComponent = ({ color }) => (
       <FontAwesome name={TAB_ICON[route.name]} size={22} color={color} />
     );
+  } else if (route.name === 'MyDelivery') {
+    tabBarIconComponent = ({ color }) => (
+      <FontAwesome name={TAB_ICON[route.name]} size={22} color={color} />
+    );
   } 
+
 
   return {
     tabBarIcon: tabBarIconComponent,
@@ -58,7 +65,8 @@ export const VolunteerAppNavigator = () => (
         name="Home" 
         component={VolunteerNavigator}
       />
+      
+      <Tab.Screen name="MyDelivery" component={MyDeliveryScreen}  />
       <Tab.Screen name="Profile" component={VolunteerProfileScreen}  />
-      <Tab.Screen name="UploadPhoto" component={UploadPhotoScreen}  />
     </Tab.Navigator>
 );

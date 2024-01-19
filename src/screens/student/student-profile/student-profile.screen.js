@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext,} from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { Divider, Button, Card, List } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
@@ -9,18 +9,10 @@ import { ref} from 'firebase/database';
 
 import { FIREBASE_FIRESTORE } from '../../../config/firebase';
 import { collection, getDocs, query as queryGei, where } from "firebase/firestore";
-
-const fetchCollegeData = async () => {
-  const dbRef = ref(FIREBASE_DATABASE, 'checkpoint'); // Assuming 'posts' is your Firebase collection name
-  const snapshot = await get(dbRef);
-  if (snapshot.exists()) {
-    return Object.values(snapshot.val()); // Assuming your data is stored as an object
-  } else {
-    return [];
-  }
-};
+import { AuthenticationContext } from '../../../services/authentication/authentication.context';
 
 export const StudentProfileScreen = () => {
+  const { onLogout } = useContext(AuthenticationContext);
   const [profileImage, setProfileImage] = useState("");
   const [expanded, setExpanded] = useState(true);
   const [name, setName] = useState("");
@@ -42,8 +34,6 @@ export const StudentProfileScreen = () => {
           setEmail(auth.email);
         }
   
-        // Fetching checkpoint data
-        fetchCollegeData();
   
         // Fetching user data
         const querySnapshot = await getDocs(query);
@@ -54,29 +44,11 @@ export const StudentProfileScreen = () => {
   
       } catch (error) {
         console.error('Error fetching data:', error);
-      } finally {
-        setIsLoading(false);
-      }
+      } 
     };
   
     fetchData();
   }, [query]);
-  
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await fetchCollegeData();
-        console.log('Fetched data:', data); // Log the fetched data
-        setCheckpoint(data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
 
 
   const handleImagePicker = async () => {
@@ -125,7 +97,11 @@ export const StudentProfileScreen = () => {
         <Divider style={styles.divider} />
         <Text style={styles.bodyStyle}>About Us</Text>
         <Divider style={styles.divider} />
-        <Text style={styles.bodyStyle}>Logout</Text>
+        <TouchableOpacity
+          onPress={onLogout}
+        >
+          <Text style={styles.bodyStyle}>Logout</Text>
+        </TouchableOpacity>
       </View>
 
 

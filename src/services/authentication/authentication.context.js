@@ -1,6 +1,6 @@
 import React, { createContext, useState } from "react";
 import { FIREBASE_AUTH } from "../../config/firebase";
-import { onAuthStateChanged, signOut, updateProfile } from "firebase/auth";
+import { emailVerified, onAuthStateChanged, signOut } from "firebase/auth";
 import { loginRequest, registerRequest } from "./authentication.service";
 
 const auth = FIREBASE_AUTH;
@@ -80,9 +80,15 @@ export const AuthenticationContextProvider = ({children}) => {
         }
     
         registerRequest(email, password).then(async (u) => {
-    
-            setUser(u);
-            setIsLoading(false);
+
+            if (user.emailVerified) {
+                setUser(user);
+                setIsLoading(false);
+              } else {
+                // Handle unverified email (e.g., display a message or redirect)
+                console.log("User's email is not verified yet.");
+                // ... your logic for handling unverified email
+              }
         }).catch((e) => {
             setIsLoading(false);
             setError(e.toString());

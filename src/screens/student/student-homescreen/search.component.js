@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import styled from "styled-components/native";
 import { Searchbar } from "react-native-paper";
-
+import { ViewPropTypes } from 'deprecated-react-native-prop-types';
 import { LocationContext } from "../../../services/location/location.context";
 
 const SearchContainer = styled.View`
@@ -18,7 +18,7 @@ export const Search = () => {
   return (
     <SearchContainer >
       <Searchbar
-        placeholder="Search Food bank"
+        placeholder="Search Food Bank"
         placeholderTextColor="#878787"
         inputStyle={{marginTop:-4}}
         value={searchKeyword}

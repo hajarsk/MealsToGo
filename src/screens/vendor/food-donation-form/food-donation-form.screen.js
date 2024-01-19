@@ -5,7 +5,7 @@ import { push, ref as databaseRef } from 'firebase/database';
 import { getAuth } from 'firebase/auth';
 
 import { FIREBASE_DATABASE } from '../../../config/firebase';
-import { setupNotification } from '../../volunteer/notification-list/notification-component';
+// import { setupNotification } from '../../vendor/notification-list/notification-component';
 
 export const DonationFormScreen = ({ navigation }) => {
   const [selected, setSelected] = useState('');
@@ -15,7 +15,7 @@ export const DonationFormScreen = ({ navigation }) => {
   const [pickupTime, setPickupTime] = useState('');
   const [foodConcerns, setFoodConcerns] = useState([]);
 
-  const sendDonationDetailsToDatabase = async () => {
+  const handleDonation = async () => {
     try {
       const auth = getAuth();
       const user = auth.currentUser;
@@ -24,7 +24,7 @@ export const DonationFormScreen = ({ navigation }) => {
       const userName = user.displayName;
 
       const postData = {
-        status:"pending",
+        status: "pending",
         userId: userId,
         userName: userName,
         foodItem: selected,
@@ -32,46 +32,31 @@ export const DonationFormScreen = ({ navigation }) => {
         weight: weight,
         expirationDate: expirationDate,
         pickupTime: pickupTime,
-        foodConcerns: foodConcerns
+        foodConcerns: foodConcerns,
+        deliveryDate: deliveryDate
       }
       const dbRef = databaseRef(FIREBASE_DATABASE, "Donation_Details")
       await push(dbRef, postData)
-      console.log("data send successful!")
-     
-      navigation.goBack()
+      console.log("data send successful!");
+
+      setSelected('');
+      setQuantity('');
+      setWeight('');
+      setExpirationDate('');
+      setPickupTime('');
+      setFoodConcerns([]);
+
+      navigation.goBack();
     } catch (error) {
       console.error(error)
     }
-  }
-
-  const handleDonation = () => {
-    console.log(`
-    Selected: ${selected},
-    Quantity: ${quantity}, 
-    Weight: ${weight},
-    Expiration Date: ${expirationDate}, 
-    Pickup Time: ${pickupTime}, 
-    Food Concerns: ${foodConcerns}`);
-    
-    sendDonationDetailsToDatabase()
-    setupNotification()
-    setQuantity('');
-    setWeight('');
-    setExpirationDate('');
 
   };
 
-  const handlePickupTimeChange = (selectedPickupTime) => {
-    setPickupTime(selectedPickupTime);
-  };
+  const currentDate= new Date();
+      const options = { timeZone: 'Asia/Kuala_Lumpur' };
+    const deliveryDate = currentDate.toLocaleString('en-US', options);
 
-  const handleFoodConcernChange = (selectedFoodConcern) => {
-    if (foodConcerns.includes(selectedFoodConcern)) {
-      setFoodConcerns(foodConcerns.filter((concern) => concern !== selectedFoodConcern));
-    } else {
-      setFoodConcerns((prevConcerns) => [...prevConcerns, selectedFoodConcern]);
-    }
-  };
 
   const data = [
     { key: '1', value: 'Nasi Berlauk' },
@@ -83,27 +68,45 @@ export const DonationFormScreen = ({ navigation }) => {
     { key: '7', value: 'Lain-lain' },
   ]
 
+  const pickupTimeData = [
+    { key: '1', value: '8:00 AM' },
+    { key: '2', value: '10:00 AM' },
+    { key: '3', value: '12:00 PM' },
+    { key: '4', value: '2:00 PM' },
+    { key: '5', value: '4:00 PM' },
+    { key: '6', value: '6:00 PM' },
+    { key: '7', value: '8:00 PM' },
+    { key: '8', value: '9:00 PM' },
+    { key: '9', value: '10:00 PM' },
+    { key: '10', value: '11:00 PM' },
+  ];
 
+  const foodConcernsData = [
+    { key: '1', value: 'Gluten' },
+    { key: '2', value: 'Lactose' },
+    { key: '3', value: 'Vegetarian' },
+    { key: '4', value: 'Nut' },
+    { key: '5', value: 'Allergen' },
+    { key: '6', value: 'Meat' },
+    { key: '7', value: 'Dairy' },
+    { key: '5', value: 'Non-Halal' },
+  ];
 
 
 
 
   return (
     <View style={styles.container}>
+
       <View style={styles.formContainer}>
         {/* food concerns header */}
-
-
         <Text style={styles.pickupTimeHeader}>Food Item</Text>
-
         <View style={{ paddingBottom: 20 }}>
           <SelectList
-
-            placeholder="Select Item"
+            placeholder="Select Food Item"
             setSelected={(val) => setSelected(val)}
             data={data}
             save="value"
-           
           />
         </View>
 
@@ -114,11 +117,15 @@ export const DonationFormScreen = ({ navigation }) => {
           placeholder="Eg: 250"
           keyboardType="numeric"
           value={quantity}
-          onChangeText={(text) => setQuantity(text)}
+          onChangeText={(text) => {
+            // Use a regular expression to allow only numeric values
+            const numericValue = text.replace(/[^0-9]/g, '');
+            setQuantity(numericValue);
+          }}
         />
 
         {/* food weight header */}
-        <Text style={styles.pickupTimeHeader}>Food Weight (kg)</Text>
+        <Text style={styles.pickupTimeHeader}>Weight (kg)</Text>
         <TextInput
           style={styles.input}
           placeholder="Eg: 0.5"
@@ -128,84 +135,40 @@ export const DonationFormScreen = ({ navigation }) => {
         />
 
         {/* Food Expiration Date header */}
-        <Text style={styles.pickupTimeHeader}>Food Expiration Date</Text>
+        <Text style={styles.pickupTimeHeader}>Shelf Life (in Hours)</Text>
         <TextInput
           style={styles.input}
           placeholder="Eg: 2 hours"
+          keyboardType="numeric"
           value={expirationDate}
           onChangeText={(text) => setExpirationDate(text)}
         />
 
-        {/* pickup time header */}
+        {/* pickup time dropdown */}
         <Text style={styles.pickupTimeHeader}>
           Pickup Time
         </Text>
-
-
-        {/* food concern buttons */}
-        <View style={styles.foodConcernsButtons}>
-          <TouchableOpacity
-            style={styles.foodConcernButton}
-            onPress={() => handlePickupTimeChange('10:00 AM')}
-          >
-            <Text style={styles.foodConcernButtonText}>10:00 AM</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.foodConcernButton}
-            onPress={() => handlePickupTimeChange('4:00 PM')}
-          >
-            <Text style={styles.foodConcernButtonText}>4:00 PM</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.foodConcernButton}
-            onPress={() => handlePickupTimeChange('10:00 PM')}
-          >
-            <Text style={styles.foodConcernButtonText}>10:00 PM</Text>
-          </TouchableOpacity>
-
-        </View>
-        
-
-
-        {/* food concerns header */}
-        <Text style={styles.pickupTimeHeader}>
-          Food Concerns
-        </Text>
-
-        {/*Food concerns buttons */}
-        <View style={styles.foodConcernsButtons}>
-          <TouchableOpacity
-            style={styles.foodConcernButton}
-            onPress={() => handleFoodConcernChange('Gluten')}
-          >
-            <Text style={styles.foodConcernButtonText}>Gluten</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.foodConcernButton}
-            onPress={() => handleFoodConcernChange('Lactose')}
-          >
-            <Text style={styles.foodConcernButtonText}>Lactose</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.foodConcernButton}
-            onPress={() => handleFoodConcernChange('Vegetarian')}
-          >
-            <Text style={styles.foodConcernButtonText}>Vegetarian</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.foodConcernButton}
-            onPress={() => handleFoodConcernChange('Nut')}
-          >
-            <Text style={styles.foodConcernButtonText}>Nut</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.foodConcernButton}
-            onPress={() => handleFoodConcernChange('Allergen')}
-          >
-            <Text style={styles.foodConcernButtonText}>Allergen</Text>
-          </TouchableOpacity>
+        <View style={{ paddingBottom: 20 }}>
+          <SelectList
+            placeholder="Select Pickup Time"
+            setSelected={(val) => setPickupTime(val)}
+            data={pickupTimeData}
+            save="value"
+          />
         </View>
 
+        {/* Food Concerns Dropdown */}
+        <Text style={styles.pickupTimeHeader}>Food Concerns</Text>
+        <View style={{ paddingBottom: 20 }}>
+          <SelectList
+            placeholder="Select Food Concerns"
+            setSelected={(val) => setFoodConcerns(val)}
+            data={foodConcernsData}
+            save="key" // Use "key" to save the selected key
+            canDeselect={true} // Allow deselecting concerns
+            multiple={true} // Allow multiple selections
+          />
+        </View>
 
         <TouchableOpacity style={styles.donationButton} onPress={handleDonation}>
           <Text style={styles.buttonText}>Submit</Text>
@@ -213,6 +176,7 @@ export const DonationFormScreen = ({ navigation }) => {
 
 
       </View>
+
     </View>
   );
 };
@@ -221,8 +185,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
     flex: 1,
-    paddingTop: 30,
-    alignItems: 'center',
+    paddingTop: 20,
     paddingHorizontal: 20,
   },
   heading: {
@@ -263,6 +226,7 @@ const styles = StyleSheet.create({
   },
   pickupTimeHeader: {
     marginBottom: 10,
+    marginTop: -5,
     color: 'black',
     fontWeight: 'bold',
   },

@@ -9,7 +9,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { SafeArea } from "../../../components/utility/safe-area.component";
 import { Spacer } from "../../../components/spacer/spacer.component";
 import { Search } from "../../volunteer/volunteer-homescreen/search.component";
-import { checkpointInfoCard } from "../../volunteer/volunteer-homescreen/checkpoint-card.component";
+import { CheckpointInfoCard } from "../../volunteer/volunteer-homescreen/checkpoint-card.component";
 
 import { ref, get } from 'firebase/database';
 import { FIREBASE_DATABASE } from "../../../config/firebase";
@@ -41,6 +41,7 @@ export const VolunteerCheckpointScreen = ({ navigation }) => {
   const [role, setRole] = useState("");
   const [checkpoints, setCheckpoint] = useState([])
   const [isLoading, setIsLoading] = useState(true);
+  const [shouldFetchData, setShouldFetchData] = useState(true);
 
   // User information retrieval
   const collectionRef = collection(FIREBASE_FIRESTORE, "users");
@@ -53,10 +54,7 @@ export const VolunteerCheckpointScreen = ({ navigation }) => {
         if (auth) {
           setEmail(auth.email);
         }
-  
-        // Fetching checkpoint data
-        fetchCollegeData();
-  
+
         // Fetching user data
         const querySnapshot = await getDocs(query);
         querySnapshot.forEach((doc) => {
@@ -64,27 +62,33 @@ export const VolunteerCheckpointScreen = ({ navigation }) => {
           setName(data["name"]);
           setRole(data["role"]);
         });
-  
+
+        // Fetching checkpoint data if shouldFetchData is true
+        if (shouldFetchData) {
+          fetchCollegeData();
+          // Set shouldFetchData to false after the initial fetch
+          setShouldFetchData(false);
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
-      } finally {
-        setIsLoading(false);
       }
     };
   
     fetchData();
-  }, [query]);
+  }, [query,shouldFetchData]);
   
   // Separate function to fetch college data
   const fetchCollegeData = async () => {
     try {
       const dbRef = ref(FIREBASE_DATABASE, 'checkpoint');
       const snapshot = await get(dbRef);
-      const allData = Object.values(snapshot.val())
-      setCheckpoint(allData)
+      const allData = Object.values(snapshot.val());
+      setCheckpoint(allData);
     } catch (error) {
       console.error('Error fetching college data:', error);
       return [];
+    } finally {
+      setIsLoading(false);
     }
   };
   
@@ -166,7 +170,7 @@ export const VolunteerCheckpointScreen = ({ navigation }) => {
       </View>
 
       
-      {/* <CheckpointList
+      <CheckpointList
         data={checkpoints}
         renderItem={({ item }) => {
           return (
@@ -184,7 +188,7 @@ export const VolunteerCheckpointScreen = ({ navigation }) => {
           );
         }}
         keyExtractor={(item) => item.name}
-      /> */}
+      />
 
     </SafeArea>
   );

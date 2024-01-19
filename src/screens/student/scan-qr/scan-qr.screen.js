@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, Button } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import { FIREBASE_FIRESTORE } from '../../../config/firebase';
+import { getAuth } from 'firebase/auth';
+import { doc, setDoc,addDoc,collection } from "firebase/firestore"; 
+
 
 export const ScanScreen = () => {
   const [hasPermission, setHasPermission] = useState(null);
@@ -15,10 +19,36 @@ export const ScanScreen = () => {
     getBarCodeScannerPermissions();
   }, []);
 
-  const handleBarCodeScanned = ({ type, data }) => {
+  const handleBarCodeScanned = async ({ type, data }) => {
     setScanned(true);
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-    console.log("hajar gei")
+    alert(`QR code has been scanned!`);
+
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      console.log(user);
+
+      const userId = user.uid;
+      const email = user.email;
+      const currentDate = new Date();
+      const options = { timeZone: 'Asia/Kuala_Lumpur' };
+      const scanDate = currentDate.toLocaleString('en-US', options);
+
+      // Add a new document in the "Scans" collection
+      const docRef = await addDoc(collection(FIREBASE_FIRESTORE, "TrackFoodQuantity"), {
+        userId: userId,
+        email: email,
+        scanDate: scanDate,
+        scanData: data, // Save the scanned QR code data
+      });
+
+      console.log("Scan data sent successfully!");
+
+      // Perform any navigation or additional actions as needed
+      // navigation.navigate('YourTargetScreen'); 
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   if (hasPermission === null) {
@@ -28,14 +58,19 @@ export const ScanScreen = () => {
     return <Text style={styles.text}>No access to camera</Text>;
   }
 
+  
   return (
     <View style={styles.container}>
-      <BarCodeScanner
-        onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-        style={StyleSheet.absoluteFillObject}
-      />
-      {scanned && <Button title={'Tap to Scan Again'} onPress={() => setScanned(false)} />}
-    </View>
+    <BarCodeScanner
+      onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+      style={StyleSheet.absoluteFillObject}
+    />
+    {scanned && (
+      <View >
+        <Button title={'Tap to Scan Again'} onPress={() => setScanned(false)} />
+      </View>
+    )}
+  </View>
   );
 };
 
@@ -53,6 +88,6 @@ const styles = StyleSheet.create({
     color: '#333',
     marginTop: 20,
   },
+  
 });
-
 

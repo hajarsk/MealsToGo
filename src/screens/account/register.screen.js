@@ -1,10 +1,10 @@
 import React, { useState, useContext } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { ActivityIndicator, RadioButton, Button } from "react-native-paper";
-
+import { SelectList } from 'react-native-dropdown-select-list';
 
 import { FIREBASE_FIRESTORE } from "../../config/firebase";
-import {collection, addDoc as firestoreDoc} from "firebase/firestore"
+import { collection, addDoc as firestoreDoc } from "firebase/firestore"
 
 import {
   AccountBackground,
@@ -26,6 +26,7 @@ export const RegisterScreen = ({ navigation }) => {
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [brn, setBrn] = useState("");
+  const [selected, setSelected] = useState("");
   const [college, setCollege] = useState("");
   const [address, setAddress] = useState("");
   const [repeatedPassword, setRepeatedPassword] = useState("");
@@ -36,56 +37,64 @@ export const RegisterScreen = ({ navigation }) => {
   const studentData = {
     id: Math.floor(Math.random() * 900000) + 100000,
     role: checked,
-    name:name,
+    name: name,
     email: email,
-    college:college,
+    college: college,
   }
   const vendorData = {
     id: Math.floor(Math.random() * 900000) + 100000,
     role: checked,
-    name:name,
+    name: name,
     email: email,
-    brn:brn,
-    phoneNumber:phoneNumber,
-    address:address
+    brn: brn,
+    phoneNumber: phoneNumber,
+    address: address
   }
   const volunteerData = {
     id: Math.floor(Math.random() * 900000) + 100000,
     role: checked,
-    name:name,
+    name: name,
     email: email,
-    phoneNumber:phoneNumber,
+    phoneNumber: phoneNumber,
+    associationName: selected
   }
 
   const sendDataToDatabase = async () => {
-    
-  const postCollection = collection(FIREBASE_FIRESTORE,"users")
-  
 
-    try{
-      if(checked == "student"){
-       firestoreDoc(postCollection,studentData).then((docRef)=>{
-        console.log("done send data")
-       })
-       onRegisterStudent(email, password, repeatedPassword)
+    const postCollection = collection(FIREBASE_FIRESTORE, "users")
 
-      }else if(checked == "volunteer"){
-        firestoreDoc(postCollection,volunteerData).then((docRef)=>{
+
+    try {
+      if (checked == "student") {
+        firestoreDoc(postCollection, studentData).then((docRef) => {
           console.log("done send data")
         })
-        onRegisterVolunteer(email, password, repeatedPassword) 
-      }else{
-        firestoreDoc(postCollection,vendorData).then((docRef)=>{
+        onRegisterStudent(email, password, repeatedPassword)
+
+      } else if (checked == "volunteer") {
+        firestoreDoc(postCollection, volunteerData).then((docRef) => {
+          console.log("done send data")
+        })
+        onRegisterVolunteer(email, password, repeatedPassword)
+      } else {
+        firestoreDoc(postCollection, vendorData).then((docRef) => {
           console.log("done send data")
         })
         onRegisterVendor(email, password, repeatedPassword)
       }
-    }catch(error){
+    } catch (error) {
       console.error(error)
     }
   }
   console.log(checked)
-  
+
+  const data = [
+    { key: '1', value: 'Persatuan Belia Harmoni' },
+    { key: '2', value: 'Kelab Rakan Siswa' },
+    { key: '3', value: 'Kelab Penyayang' },
+
+  ]
+
   return (
     <AccountBackground>
       <AccountCover />
@@ -173,14 +182,10 @@ export const RegisterScreen = ({ navigation }) => {
             )}
             <Spacer size="large">
               {!isLoading ? (
-                <Button
-                  style={styles.loginButton}
-                  icon="email"
-                  mode="contained"
-                  onPress={() => sendDataToDatabase()}
-                >
-                  Sign Up
-                </Button>
+                <TouchableOpacity  style={styles.loginButton} onPress={() => sendDataToDatabase()}>
+                <Text style={styles.buttonText}>Sign Up</Text>
+              </TouchableOpacity>
+                
               ) : (
                 <ActivityIndicator animating={true} color="green" />
               )}
@@ -189,11 +194,24 @@ export const RegisterScreen = ({ navigation }) => {
         )}
         {checked === "Volunteer" && (
           <>
-            <Spacer size="large">
+           <Spacer size="large">
+            <View>
+              <SelectList
+
+                placeholder="Select Association"
+                setSelected={(val) => setSelected(val)}
+                data={data}
+                save="value"
+
+              />
+            </View>
+            </Spacer>
+            <Spacer size="small">
               <AuthInput
                 label="Name"
                 value={name}
                 autoCapitalize="none"
+                placeholder="Alia Hassan"
                 onChangeText={(u) => setName(u)}
               />
             </Spacer>
@@ -203,6 +221,7 @@ export const RegisterScreen = ({ navigation }) => {
                 value={email}
                 textContentType="emailAddress"
                 keyboardType="email-address"
+
                 autoCapitalize="none"
                 onChangeText={(u) => setEmail(u)}
               />
@@ -211,7 +230,9 @@ export const RegisterScreen = ({ navigation }) => {
               <AuthInput
                 label="Phone Number"
                 value={phoneNumber}
+                keyboardType="numeric"
                 autoCapitalize="none"
+
                 onChangeText={(u) => setPhoneNumber(u)}
               />
             </Spacer>
@@ -242,13 +263,9 @@ export const RegisterScreen = ({ navigation }) => {
             )}
             <Spacer size="large">
               {!isLoading ? (
-                <Button
-                  style={styles.loginButton}
-                  mode="contained"
-                  onPress={() => sendDataToDatabase()}
-                >
-                  Sign Up
-                </Button>
+                <TouchableOpacity  style={styles.loginButton} onPress={() => sendDataToDatabase()}>
+                <Text style={styles.buttonText}>Sign Up</Text>
+              </TouchableOpacity>
 
               ) : (
                 <ActivityIndicator animating={true} color="#456876" />
@@ -327,13 +344,9 @@ export const RegisterScreen = ({ navigation }) => {
             )}
             <Spacer size="large">
               {!isLoading ? (
-                <Button
-                  style={styles.loginButton}
-                  mode="contained"
-                  onPress={() => sendDataToDatabase()}
-                >
-                  Sign Up
-                </Button>
+                <TouchableOpacity  style={styles.loginButton} onPress={() => sendDataToDatabase()}>
+                <Text style={styles.buttonText}>Sign Up</Text>
+              </TouchableOpacity>
 
               ) : (
                 <ActivityIndicator animating={true} color="#000000" />
@@ -362,7 +375,7 @@ export const RegisterScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   loginButton: {
     backgroundColor: '#4FAF5A',
-    padding: 5,
+    padding: 15,
     marginTop: 15,
     borderRadius: 50,
     alignItems: 'center',

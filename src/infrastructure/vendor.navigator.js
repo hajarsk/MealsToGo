@@ -12,6 +12,7 @@ import { VendorProfileScreen } from "../screens/vendor/vendor-profile/vendor-pro
 import { DonationFormScreen } from "../screens/vendor/food-donation-form/food-donation-form.screen";
 import { MapScreen } from "../screens/vendor/track-food-donation-delivery/map.screen";
 import { MyDonationScreen } from "../screens/vendor/my-donation/my-donation.screen";
+import { LoginScreen } from "../screens/account/login.screen";
 
 
 //drawer and card
@@ -20,7 +21,7 @@ const VendorStack = createStackNavigator();
 export const VendorNavigator = () => {
   return (
     <VendorStack.Navigator
-      headerMode="none"
+    headerShown="false"
       screenOptions={{
         ...TransitionPresets.ModalPresentationIOS,
       }}
@@ -53,6 +54,10 @@ export const VendorNavigator = () => {
       <VendorStack.Screen
         name="Map"
         component={MapScreen}
+      />
+      <VendorStack.Screen
+        name="Login"
+        component={LoginScreen}
       />
     </VendorStack.Navigator>
   );

@@ -29,13 +29,14 @@ export const LoginScreen = ({ navigation }) => {
       <Title>ShareCare</Title>
       <AccountContainer>
         <AuthInput
+        
           label="Email"
           value={email}
           textContentType="emailAddress"
           keyboardType="email-address"
           autoCapitalize="none"
           onChangeText={(u) => setEmail(u)}
-          style={{ backgroundColor: 'transparent', }}
+          style={{ backgroundColor: 'transparent' }}
 
         />
         <Spacer size="large">
@@ -59,14 +60,9 @@ export const LoginScreen = ({ navigation }) => {
         )}
         <Spacer size="large">
           {!isLoading ? (
-            <Button
-              style={styles.loginButton}
-              labelStyle={styles.buttonText}
-              mode="contained"
-              onPress={() => handleLogin()}
-            >
-              Login
-            </Button>
+            <TouchableOpacity  style={styles.loginButton} onPress={() => handleLogin()}>
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity>
           ) : (
             <ActivityIndicator animating={true} color="#000000" />
           )}
@@ -94,8 +90,9 @@ export const LoginScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   loginButton: {
+    width: 300,
     backgroundColor: '#4FAF5A',
-    padding: 5,
+    padding: 15,
     marginTop: 15,
     borderRadius: 50,
     alignItems: 'center',

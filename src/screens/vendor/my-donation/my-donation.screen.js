@@ -1,26 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView,Text, View, StyleSheet } from 'react-native';
-import { Button, Card, Divider} from 'react-native-paper';
-import { get, child,ref  } from 'firebase/database';
+import { ScrollView, Text, View, StyleSheet } from 'react-native';
+import { Button, Card, Divider } from 'react-native-paper';
+import { get, child, ref } from 'firebase/database';
 
 import { FIREBASE_DATABASE } from '../../../config/firebase';
 import { Spacer } from '../../../components/spacer/spacer.component';
 
-export const MyDonationScreen = ({navigation}) => {
+export const MyDonationScreen = ({ navigation }) => {
   const [myDonation, setMyDonation] = useState([]);
   const [showDetails, setShowDetails] = useState(false);
+
 
   useEffect(() => {
     const dbRef = ref(FIREBASE_DATABASE);
     get(child(dbRef, 'Donation_Details'))
       .then((snapshot) => {
         if (snapshot.exists()) {
-         const retrieveData=snapshot.val();
-         const dataArray = Object.values(retrieveData).map((item) => ({
-          ...item,
-          showDetails: false,
-        }));
-         setMyDonation(dataArray);
+          const retrieveData = snapshot.val();
+          const dataArray = Object.values(retrieveData).map((item) => ({
+            ...item,
+            showDetails: false,
+          }));
+          setMyDonation(dataArray);
         } else {
           console.log("No data available");
         }
@@ -28,7 +29,7 @@ export const MyDonationScreen = ({navigation}) => {
       .catch((error) => {
         console.error("Error fetching data:", error.message);
       });
-  }, []); 
+  }, []);
 
   const toggleDetails = (index) => {
     setMyDonation((prevDonation) =>
@@ -37,99 +38,111 @@ export const MyDonationScreen = ({navigation}) => {
       )
     );
   };
-  
 
- 
+
+
   return (
-<ScrollView contentContainerStyle={styles.scrollViewContainer}>
-    {/* // id student/rider/vendor */}
-    <View style={styles.container}>
-      {/* profile header */}
-      <Text style={styles.pageTitle}>My Donation List</Text>
-      {/* Profile content goes here */}
-      <View style={styles.profileSection}>
-        {myDonation.map((item, index) => (
+    <ScrollView>
+      {/* // id student/rider/vendor */}
+      <View style={styles.container}>
 
-        <Card style={{ backgroundColor: '#ffffff', width: 350, marginVertical:8 }}>
-          {/* Header Section */}
-          <View style={styles.headerSection}>
-                  <Text style={styles.headerText}>Donation Summary</Text>
-                </View>
-          <Card.Content>
-            
-                
-            <Spacer>
-              <View style={styles.bodySection}>
-                
-                {/* <Text style={styles.subHeaderStyle}>Deliver food from:</Text>
-                <Text style={styles.bodyStyle}>{item.userName}</Text> */}
-                <Text style={styles.subHeaderStyle}>Food Item:</Text>
-                      <Text style={styles.bodyStyle}>{item.quantity}x {item.foodItem}</Text>
-                      
-                <Divider style={styles.divider} />
-                <Text style={styles.subHeaderStyle}>Pickup Time:</Text>
-                      <Text style={styles.bodyStyle}>{item.pickupTime}</Text>
-                
-                {item.showDetails && (
-                    <>
-                      
-                      <Divider style={styles.divider} />
-                      
-                      <Text style={styles.subHeaderStyle}>Delivery food from:</Text>
-                      <Text style={styles.bodyStyle}>{item.userName}</Text>
+        {/* Profile content goes here */}
+        <View style={styles.profileSection}>
+          {myDonation.map((item, index) => (
 
-                      
-                      <Divider style={styles.divider} />
-                      <Text style={styles.subHeaderStyle}>Vendor Address:</Text>
-                      <Text style={styles.bodyStyle}>Address</Text>
-                      
-                    </>
-                  )}
+            <Card style={{ backgroundColor: '#ffffff', width: 350, marginVertical: 8 }}>
+              {/* Header Section */}
+              <View style={styles.headerSection}>
+                <Text style={styles.headerText}>Donation Summary</Text>
               </View>
-            </Spacer>
-            <Card.Actions>
-            <View style={{flex:1,flexDirection:'row',
-    justifyContent: 'space-between',
-    marginTop: 5,}}>
-            <View >
-            <Text style={styles.hyperlinkStyle} 
-                   onPress={() => toggleDetails(index)}
-                  labelStyle={{ color: '#ffffff' }}
-                  
-                >
-                  
-                  {item.showDetails ? 'Hide Details' : 'See More Details'}
-                  </Text>
-            </View>
-            <View style={{alignContent:'flex-end'}} >
-            {item.status === 'pending' ? (
-              <Button
-                style={{ backgroundColor: 'grey', borderColor: '#ffffff'}}
-                labelStyle={{ color: '#ffffff' }}
-              >
-                Pending
-              </Button>
-            ) : (
-              <Button
-                style={{ backgroundColor: '#4faf5a', borderColor: '#ffffff' }}
-                labelStyle={{ color: '#ffffff' }}
-                onPress={() => navigation.navigate('Map')}
-              >
-                Track
-              </Button>
-              
-            )}
-            </View>
-            </View>
-          </Card.Actions>
-          </Card.Content>
-        </Card>
-        ))}
+              <Card.Content>
+                <Spacer size={"large"}>
+                  <View style={styles.bodySection}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                      <Text style={styles.bodyStyle}>{item.deliveryDate}</Text>
+
+                    </View>
+                    <Divider style={styles.divider} />
+                    <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+                      <View >
+                        <Spacer size="small">
+                          <Text style={styles.subHeaderStyle}>Pickup Time:</Text>
+                          <Text style={styles.bodyStyle}>{item.pickupTime}</Text>
+                        </Spacer>
+                      </View>
+                      
+                    </View>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <View>
+
+                      <Spacer size="small">
+                        <Text style={styles.subHeaderStyle}>Food Item:</Text>
+                        <Text style={styles.bodyStyle}>{item.quantity}x {item.foodItem}</Text>
+                      </Spacer>
+                    </View>
+                    <View style={{ alignContent: 'flex-end' }}>
+                      {item.status === 'track' ? (
+                        <Button
+                          style={{ backgroundColor: '#cccccc', borderColor: '#ffffff' }}
+                          labelStyle={{ color: '#ffffff' }}
+                        >
+                          Pending
+                        </Button>
+                      ) : (
+                        <Button
+                          style={{ backgroundColor: '#4faf5a', borderColor: '#ffffff' }}
+                          labelStyle={{ color: '#ffffff' }}
+                          onPress={() => navigation.navigate('Map')}
+                        >
+                          Track
+                        </Button>
+                      )}
+                    </View>
+                    </View>
+
+                    {item.showDetails && (
+                      <>
+
+                        <Divider style={styles.divider} />
+
+                        <Text style={styles.subHeaderStyle}>Deliver Food To:</Text>
+                        <Text style={styles.bodyStyle}>Universiti Putra Malaysia</Text>
 
 
 
+
+                      </>
+                    )}
+                  </View>
+
+                </Spacer>
+                <Card.Actions>
+                  <View style={{
+                    flex: 1, flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    marginTop: 5,
+                  }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+                      <Text
+                        style={styles.hyperlinkStyle}
+                        onPress={() => toggleDetails(index)}
+                        labelStyle={{ color: '#ffffff' }}
+                      >
+
+                        {item.showDetails ? 'Hide Details' : 'See More Details'}
+                      </Text>
+                    </View>
+
+                  </View>
+                </Card.Actions>
+              </Card.Content>
+            </Card>
+          ))}
+
+
+
+        </View>
       </View>
-    </View>
     </ScrollView>
   );
 };
@@ -152,7 +165,7 @@ const styles = StyleSheet.create({
   profileText: {
     fontSize: 18,
     marginBottom: 10,
-    
+
   },
   divider: {
     marginVertical: 10,
@@ -252,24 +265,24 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     borderRadius: 8,
   },
-  hyperlinkStyle:{
+  hyperlinkStyle: {
     color: '#4FAF5A',
     textDecorationLine: 'underline',
-    alignItems:'flex-start',
-    paddingTop:10
-  }, 
+    alignItems: 'flex-start',
+    paddingTop: 10
+  },
   headerSection: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#a0ca85',
     padding: 10,
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,   
-    marginBottom:5,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    marginBottom: 8,
   },
   headerText: {
-    
+
     fontSize: 15,
     fontWeight: 'bold',
-    textAlign:'center',
+    textAlign: 'center',
     color: '#000000', // Adjust text color as needed
   },
 });

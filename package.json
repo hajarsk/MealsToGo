@@ -19,8 +19,10 @@
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/stack": "^6.3.20",
     "camelize": "^1.0.1",
+    "deprecated-react-native-prop-types": "^5.0.0",
     "expo": "^49.0.20",
     "expo-barcode-scanner": "^12.7.0",
+    "expo-camera": "~13.4.4",
     "expo-font": "~11.4.0",
     "expo-image-picker": "~14.3.2",
     "expo-location": "~16.1.0",
@@ -44,8 +46,7 @@
     "react-native-screens": "~3.22.0",
     "react-native-svg": "13.9.0",
     "react-native-webview": "13.2.2",
-    "styled-components": "^6.1.0",
-    "expo-camera": "~13.4.4"
+    "styled-components": "^6.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

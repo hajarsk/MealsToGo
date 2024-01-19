@@ -1,11 +1,8 @@
 import { Camera, CameraType } from 'expo-camera';
 import { useState,  useRef } from 'react';
 import { Button,Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Feather } from '@expo/vector-icons';
 import { FIREBASE_FIRESTORE } from '../../../config/firebase';
-import { getAuth } from 'firebase/auth';
-import { doc, setDoc,addDoc,collection } from "firebase/firestore"; 
-
+import { getAuth } from "firebase/auth";
 export const UploadPhotoScreen = () => {
   const [type, setType] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();

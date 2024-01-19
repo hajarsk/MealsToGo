@@ -16,11 +16,11 @@ export const Navigation = () => {
   const [userRole, setUserRole] = useState("loading");
   const [isLoading, setIsLoading] = useState(true);
 
-
+  const user = getAuth().currentUser;
   useEffect(() => {
     const fetchUserRole = async () => {
       try {
-        const user = getAuth().currentUser;
+        
 
         if (user) {
           const db = getFirestore();

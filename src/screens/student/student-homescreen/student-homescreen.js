@@ -1,5 +1,5 @@
-import React, { useContext, useState, useEffect } from "react";
-import { StyleSheet, Text, FlatList, TouchableOpacity, View } from "react-native";
+import React, { useState, useEffect } from "react";
+import { StyleSheet, Text, TouchableOpacity, View, FlatList } from "react-native";
 import styled from "styled-components/native";
 import { ActivityIndicator, Badge } from "react-native-paper";
 import { SliderBox } from "react-native-image-slider-box";
@@ -41,6 +41,7 @@ export const StudentCheckpointScreen = ({ navigation }) => {
   const [role, setRole] = useState("");
   const [checkpoints, setCheckpoint] = useState([])
   const [isLoading, setIsLoading] = useState(true);
+  const [shouldFetchData, setShouldFetchData] = useState(true);
 
   // User information retrieval
   const collectionRef = collection(FIREBASE_FIRESTORE, "users");
@@ -53,10 +54,7 @@ export const StudentCheckpointScreen = ({ navigation }) => {
         if (auth) {
           setEmail(auth.email);
         }
-  
-        // Fetching checkpoint data
-        fetchCollegeData();
-  
+
         // Fetching user data
         const querySnapshot = await getDocs(query);
         querySnapshot.forEach((doc) => {
@@ -64,27 +62,34 @@ export const StudentCheckpointScreen = ({ navigation }) => {
           setName(data["name"]);
           setRole(data["role"]);
         });
-  
+
+        // Fetching checkpoint data if shouldFetchData is true
+        if (shouldFetchData) {
+          fetchCollegeData();
+          // Set shouldFetchData to false after the initial fetch
+          setShouldFetchData(false);
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
-      } finally {
-        setIsLoading(false);
       }
     };
-  
+
     fetchData();
-  }, [query]);
+  }, [query, shouldFetchData]);
   
-  // Separate function to fetch college data
   const fetchCollegeData = async () => {
     try {
+      setIsLoading(true);
       const dbRef = ref(FIREBASE_DATABASE, 'checkpoint');
       const snapshot = await get(dbRef);
-      const allData = Object.values(snapshot.val())
-      setCheckpoint(allData)
+      const allData = Object.values(snapshot.val());
+      console.log('allData:', allData); // Print to the console
+      setCheckpoint(allData);
     } catch (error) {
       console.error('Error fetching college data:', error);
       return [];
+    } finally {
+      setIsLoading(false);
     }
   };
   
@@ -164,15 +169,13 @@ export const StudentCheckpointScreen = ({ navigation }) => {
       <View style={styles.containerHeaderUser}>
         <Text style={styles.foodbankHeader}>UPM Food Bank List</Text>
       </View>
-
-      
-      {/* <CheckpointList
+      <CheckpointList
         data={checkpoints}
         renderItem={({ item }) => {
           return (
             <TouchableOpacity
               onPress={() =>
-                navigation.navigate("CheckpointDetail", {
+                navigation.navigate("StudentCheckpointDetail", {
                   checkpoint: item,
                 })
               }
@@ -184,7 +187,7 @@ export const StudentCheckpointScreen = ({ navigation }) => {
           );
         }}
         keyExtractor={(item) => item.name}
-      /> */}
+      />
 
     </SafeArea>
   );

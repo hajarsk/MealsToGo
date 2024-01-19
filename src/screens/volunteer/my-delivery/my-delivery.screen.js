@@ -29,46 +29,109 @@ useEffect(() => {
     });
 }, []); 
 
+const toggleDetails = (index) => {
+  setVolunteer((preVolunteer) =>
+    preVolunteer.map((item, i) =>
+      i === index ? { ...item, showDetails: !item.showDetails } : item
+    )
+  );
+};
 
   return (
 
     // id student/rider/vendor
     <View style={styles.container}>
-      {/* profile header */}
-      <Text style={styles.pageTitle}>Volunteer Delivery Details</Text>
+      
       {/* Profile content goes here */}
       <View style={styles.profileSection}>
        {volunteer.map((item, index) => (
         
-          <Card  style={{ backgroundColor: '#ffffff', width: 350, marginBottom: 20 }}>
-            <Card.Content>
-              <Spacer>
-                <View style={styles.bodySection}>
-                  <Text style={styles.headerStyle}>Delivery Details</Text>
-                  <Text style={styles.subHeaderStyle}>Deliver food from:</Text>
-                  <Text style={styles.bodyStyle}>{item.userName}</Text>
-                  <Divider style={styles.divider} />
-                  <Text style={styles.subHeaderStyle}>Vendor address:</Text>
-                  <Text style={styles.bodyStyle}>vendorAddress</Text>
-                  <Divider style={styles.divider} />
-                  <Text style={styles.subHeaderStyle}>Food items:</Text>
-                  <Text style={styles.bodyStyle}>{item.quantity}x {item.foodItem}</Text>
-                  <Divider style={styles.divider} />
-                  <Text style={styles.subHeaderStyle}>Pickup Time:</Text>
-                  <Text style={styles.bodyStyle}>{item.pickupTime}</Text>
-                  <Divider style={styles.divider} />
-                  <Text style={styles.subHeaderStyle}>Volunteer Assigned:</Text>
-                  <Text style={styles.bodyStyle}>{item.assignVolunteer}</Text>
-                  <Divider style={styles.divider} />
+        <Card style={{ backgroundColor: '#ffffff', width: 350, marginVertical: 8 }}>
+        {/* Header Section */}
+        <View style={styles.headerSection}>
+          <Text style={styles.headerText}>Delivery Summary</Text>
+        </View>
+        <Card.Content>
+          <Spacer size={"large"}>
+            <View style={styles.bodySection}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Text style={styles.bodyStyle}>{item.deliveryDate}</Text>
+
+              </View>
+              <Divider style={styles.divider} />
+              <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+                <View >
+                  <Spacer size="small">
+                    <Text style={styles.subHeaderStyle}>Pickup Time:</Text>
+                    <Text style={styles.bodyStyle}>{item.pickupTime}</Text>
+                  </Spacer>
                 </View>
-              </Spacer>
-              <Card.Actions>
-                <Button  style={{ backgroundColor: '#4faf5a' }}>
-                  Confirm Delivery
-                </Button>
-              </Card.Actions>
-            </Card.Content>
-          </Card>
+                
+              </View>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <View>
+
+                <Spacer size="small">
+                  <Text style={styles.subHeaderStyle}>Assigned Volunteer:</Text>
+                  <Text style={styles.bodyStyle}>{item.assignVolunteer}</Text>
+                </Spacer>
+              </View>
+              <View style={{ alignContent: 'flex-end' }}>
+                
+                  <Button
+                    style={{ backgroundColor: '#4faf5a', borderColor: '#ffffff' }}
+                    labelStyle={{ color: '#ffffff' }}
+                    onPress={() => navigation.navigate('UploadPhoto')}
+                  >
+                    Confirm Delivery
+                  </Button>
+                
+              </View>
+              </View>
+
+              {item.showDetails && (
+                <>
+
+                  <Divider style={styles.divider} />
+                  <Spacer size="medium">
+                  <Text style={styles.subHeaderStyle}>Deliver Food To:</Text>
+                  <Text style={styles.bodyStyle}>Universiti Putra Malaysia</Text>
+                  </Spacer>
+                  <Divider style={styles.divider} />
+                  <Spacer size="medium">
+                  <Text style={styles.subHeaderStyle}>Food Item:</Text>
+                  <Text style={styles.bodyStyle}>{item.quantity}x {item.foodItem}</Text>
+                </Spacer>
+
+
+
+
+                </>
+              )}
+            </View>
+
+          </Spacer>
+          <Card.Actions>
+            <View style={{
+              flex: 1, flexDirection: 'row',
+              justifyContent: 'space-between',
+              marginTop: 5,
+            }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+                <Text
+                  style={styles.hyperlinkStyle}
+                  onPress={() => toggleDetails(index)}
+                  labelStyle={{ color: '#ffffff' }}
+                >
+
+                  {item.showDetails ? 'Hide Details' : 'See More Details'}
+                </Text>
+              </View>
+
+            </View>
+          </Card.Actions>
+        </Card.Content>
+      </Card>
        ))} 
         
       </View>
@@ -192,5 +255,25 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
     marginBottom: 20,
     borderRadius: 8,
-  }
+  },
+  headerSection: {
+    backgroundColor: '#a0ca85',
+    padding: 10,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    marginBottom: 8,
+  },
+  headerText: {
+
+    fontSize: 15,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#000000', // Adjust text color as needed
+  },
+  hyperlinkStyle: {
+    color: '#4FAF5A',
+    textDecorationLine: 'underline',
+    alignItems: 'flex-start',
+    paddingTop: 10
+  },
 });

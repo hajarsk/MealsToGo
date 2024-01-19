@@ -21,7 +21,7 @@ const VolunteerStack = createStackNavigator();
 export const VolunteerNavigator = () => {
   return (
     <VolunteerStack.Navigator
-      headerMode="none"
+    headerShown="false"
       screenOptions={{
         ...TransitionPresets.ModalPresentationIOS,
       }}

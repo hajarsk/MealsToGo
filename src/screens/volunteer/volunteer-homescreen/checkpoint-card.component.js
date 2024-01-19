@@ -19,7 +19,7 @@ import {
 } from "./checkpoint-card.styles";
 
 
-export const checkpointInfoCard = ({ checkpoint = {} }) => {
+export const CheckpointInfoCard = ({ checkpoint = {} }) => {
   const {
     name = "Kolej Canselor",
     address = "Universiti Putra Malaysia",

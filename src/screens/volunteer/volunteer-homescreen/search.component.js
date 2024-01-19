@@ -18,7 +18,7 @@ export const Search = () => {
   return (
     <SearchContainer >
       <Searchbar
-        placeholder="Find a food bank..."
+        placeholder="Search Food Bank"
         placeholderTextColor="#878787"
         inputStyle={{marginTop:-4}}
         value={searchKeyword}

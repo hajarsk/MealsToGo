@@ -1,24 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
-import { Divider, Button, Card, List } from 'react-native-paper';
+import { View, Text, StyleSheet } from 'react-native';
+import { Divider,Card, Avatar} from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import { TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { getAuth,onAuthStateChanged } from 'firebase/auth';
 import { ref} from 'firebase/database';
+import { MaterialIcons } from '@expo/vector-icons';
 
 import { FIREBASE_FIRESTORE } from '../../../config/firebase';
 import { collection, getDocs, query as queryGei, where } from "firebase/firestore";
-
-const fetchCollegeData = async () => {
-  const dbRef = ref(FIREBASE_DATABASE, 'checkpoint'); // Assuming 'posts' is your Firebase collection name
-  const snapshot = await get(dbRef);
-  if (snapshot.exists()) {
-    return Object.values(snapshot.val()); // Assuming your data is stored as an object
-  } else {
-    return [];
-  }
-};
 
 export const VolunteerProfileScreen = () => {
   const [profileImage, setProfileImage] = useState("");
@@ -29,6 +20,7 @@ export const VolunteerProfileScreen = () => {
   const navigation = useNavigation();
   const user = getAuth();
   const handlePress = () => setExpanded(!expanded);
+  
   
   // User information retrieval
   const collectionRef = collection(FIREBASE_FIRESTORE, "users");
@@ -42,9 +34,6 @@ export const VolunteerProfileScreen = () => {
           setEmail(auth.email);
         }
   
-        // Fetching checkpoint data
-        fetchCollegeData();
-  
         // Fetching user data
         const querySnapshot = await getDocs(query);
         querySnapshot.forEach((doc) => {
@@ -54,29 +43,11 @@ export const VolunteerProfileScreen = () => {
   
       } catch (error) {
         console.error('Error fetching data:', error);
-      } finally {
-        setIsLoading(false);
       }
     };
   
     fetchData();
   }, [query]);
-  
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await fetchCollegeData();
-        console.log('Fetched data:', data); // Log the fetched data
-        setCheckpoint(data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
 
 
   const handleImagePicker = async () => {
@@ -86,7 +57,7 @@ export const VolunteerProfileScreen = () => {
         quality: 0.5,
       });
 
-      if (!result.cancelled) {
+      if (!result.canceled) {
         setProfileImage(result.uri);
       }
     } catch (error) {
@@ -94,21 +65,28 @@ export const VolunteerProfileScreen = () => {
     }
   };
 
-
   return (
     <View style={styles.container}>
 
       {/* profile header */}
       <View style={styles.headerSection}>
-        <Card style={{ flex: 1, backgroundColor: '#f5f5f5', justifyContent: 'center', alignItems: 'center' }}>
+      <Card style={{ flex: 1, backgroundColor: '#f5f5f5', justifyContent: 'center', alignItems: 'center' }}>
           <Card.Content >
-            <TouchableOpacity onPress={handleImagePicker} >
-              {profileImage && <Image source={{ uri: profileImage }} style={styles.profileImage} />}
-              <Button title="Select Profile Picture" onPress={handleImagePicker} />
+            <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+            <View style={{paddingBottom:40}}>
+            <TouchableOpacity >
+             
+              
+              {!profileImage && <Avatar.Icon icon="account" style={styles.profileImage} />}
+             
             </TouchableOpacity>
+            
+            </View>
+            
             <View style={styles.titleContainer}>
               <Text style={styles.title}>{name}</Text>
               <Text style={styles.titleEmail}>{email}</Text>
+            </View>
             </View>
           </Card.Content>
         </Card>
@@ -121,18 +99,20 @@ export const VolunteerProfileScreen = () => {
           <Text style={styles.headerStyle}>Profile Info</Text>
         
         <Divider style={styles.divider} />
-        <TouchableOpacity
-          onPress={() =>
+        
+        <TouchableOpacity  style={styles.loginButton} onPress={() =>
             navigation.navigate("MyDelivery")
           }>
-        <Text style={styles.bodyStyle}>My Delivery</Text>
-        </TouchableOpacity>
+            <Text style={styles.buttonText}>MyDelivery</Text>
+          </TouchableOpacity>
         <Divider style={styles.divider} />
         <Text style={styles.bodyStyle}>Settings</Text>
         <Divider style={styles.divider} />
         <Text style={styles.bodyStyle}>About Us</Text>
         <Divider style={styles.divider} />
+        <TouchableOpacity  style={styles.loginButton}>
         <Text style={styles.bodyStyle}>Logout</Text>
+        </TouchableOpacity>
       </View>
 
 
@@ -183,7 +163,8 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 75,
-    alignSelf: 'center'
+    alignSelf: 'center',
+    backgroundColor: 'white',
   },
   headerSection: {
     flexDirection: 'row',
@@ -220,7 +201,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     marginVertical: 12,
-    width: '90%',
+    width: '92%',
     alignContent: 'center',
   },
   thickLine: {
@@ -228,6 +209,17 @@ const styles = StyleSheet.create({
     borderBottomColor: '#e5e5e5',
     marginVertical: 25,
     width: '100%',
+  },
+  loginButton: {
+    width: 340,
+    borderColor: '#4FAF5A',
+    marginTop: 5,
+    borderRadius: 10,
+   
+  },
+  buttonText: {
+    color: '#000000',
+    fontSize: 16,
   },
 
 });

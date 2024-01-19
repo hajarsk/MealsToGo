@@ -27,7 +27,7 @@ const unsubscribe = onAuthStateChanged(auth, (user) => {
 
 export async function schedulePushNotification(item) {
   const title = `Delivery Request`;
-  const body = `${item.userName}`;
+  const body = `Vendor request for volunteer at ${item.pickupTime} on ${item.date}`;
 
   await Notifications.scheduleNotificationAsync({
     content: {
@@ -75,10 +75,8 @@ const sendDataToDatabase = async (title, body, item) => {
 export const setupNotification = async () => {
   // Get the missing cat location from the database
   const DonationDetailsButtonRef = ref(FIREBASE_DATABASE, 'Donation_Details');
-
   try {
     const snapshot = await get(DonationDetailsButtonRef);
-   
 
     if (snapshot.exists()) {
       const allData = Object.values(snapshot.val());

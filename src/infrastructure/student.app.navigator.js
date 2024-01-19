@@ -13,7 +13,7 @@ import { ScanScreen } from "../screens/student/scan-qr/scan-qr.screen";
 const Tab = createBottomTabNavigator();
 
 const TAB_ICON = {
-  HomeStudent: "home",
+  Home: "home",
   Scan: "qr-code-scanner",
   Profile: "user-o"
 };
@@ -60,7 +60,7 @@ export const StudentAppNavigator = () => (
     >
       <Tab.Screen
         options={{headerShown: false }}
-        name="HomeStudent" 
+        name="Home" 
         component={StudentNavigator}
       />
       <Tab.Screen name="Scan" component={ScanScreen} />     

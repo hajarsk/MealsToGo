@@ -19,13 +19,14 @@ import {
 } from "./checkpoint-card.styles";
 
 
-export const checkpointInfoCard = ({ checkpoint = {} }) => {
+export const CheckpointInfoCard = ({ checkpoint = {} }) => {
   const {
     name = "Kolej Canselor",
     address = "Universiti Putra Malaysia",
     icon = "https://images.macrumors.com/t/iemYuJMly_zkkWqyqXRLrEaqcpI=/1600x/article-new/2019/01/googlemaps.jpg",
     images = [
       "https://www.foodiesfeed.com/wp-content/uploads/2019/06/top-view-for-box-of-2-burgers-home-made-600x899.jpg",
+     
     ],
     available = 0,
     total = 0,

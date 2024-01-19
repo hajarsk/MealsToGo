@@ -19,7 +19,7 @@ const StudentStack = createStackNavigator();
 export const StudentNavigator = () => {
   return (
     <StudentStack.Navigator
-      headerMode="none"
+    headerShown="false"
       screenOptions={{
         ...TransitionPresets.ModalPresentationIOS,
       }}

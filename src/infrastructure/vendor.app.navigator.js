@@ -1,6 +1,6 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { MaterialIcons, AntDesign , FontAwesome } from "@expo/vector-icons";
+import { MaterialIcons, AntDesign, FontAwesome } from "@expo/vector-icons";
 
 import { VendorNavigator } from "./vendor.navigator";
 import { VendorProfileScreen } from "../screens/vendor/vendor-profile/vendor-profile.screen";
@@ -34,7 +34,7 @@ const createScreenOptions = ({ route }) => {
     tabBarIconComponent = ({ color }) => (
       <FontAwesome name={TAB_ICON[route.name]} size={22} color={color} />
     );
-  } 
+  }
 
   return {
     tabBarIcon: tabBarIconComponent,
@@ -42,28 +42,28 @@ const createScreenOptions = ({ route }) => {
     headerStyle: {
       elevation: 4,
     },
+    tabBarActiveTintColor: '#4FAF5A',
+    tabBarInactiveTintColor: 'grey',
+    tabBarStyle: [
+      { display: 'flex' },
+      null
+    ],
   };
 };
 
 export const VendorAppNavigator = () => (
-    <Tab.Navigator
-      
-      screenOptions={createScreenOptions}
-      tabBarOptions={{
-        activeTintColor: '#4FAF5A',
-        inactiveTintColor: "grey",
-        // showLabel: false,//disable icon text
-      }} 
-      tabBarStyle={{
-        borderRadius:60
-      }}
-    >
-      <Tab.Screen
-        options={{headerShown: false }}
-        name="Home" 
-        component={VendorNavigator}
-      />
-      <Tab.Screen name="Donate" component={DonationFormScreen} />     
-      <Tab.Screen name="Profile" component={VendorProfileScreen}  />
-    </Tab.Navigator>
+  <Tab.Navigator
+    screenOptions={createScreenOptions}
+    tabBarStyle={{
+      borderRadius: 60
+    }}
+  >
+    <Tab.Screen
+      options={{ headerShown: false }}
+      name="Home"
+      component={VendorNavigator}
+    />
+    <Tab.Screen name="Donate" component={DonationFormScreen} />
+    <Tab.Screen name="Profile" component={VendorProfileScreen} />
+  </Tab.Navigator>
 );

@@ -1,13 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Text } from "react-native"
 import { NavigationContainer } from "@react-navigation/native";
-
 import { AuthenticationContext } from "../services/authentication/authentication.context";
 import { StudentAppNavigator } from "./student.app.navigator";
 import { VendorAppNavigator } from "./vendor.app.navigator";
 import { VolunteerAppNavigator } from "./volunteer.app.navigator";
 import { AccountNavigator } from "./account.navigator";
-
 import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
@@ -20,7 +18,7 @@ export const Navigation = () => {
   useEffect(() => {
     const fetchUserRole = async () => {
       try {
-        
+
 
         if (user) {
           const db = getFirestore();
@@ -32,12 +30,12 @@ export const Navigation = () => {
           if (!querySnapshot.empty) {
             const userData = querySnapshot.docs[0].data();
             setUserRole(userData.role);
-            
+
           } else {
             console.error('User document not found.');
           }
         }
-        
+
       } catch (error) {
         console.error('Error fetching user role:', error);
       }

@@ -29,7 +29,7 @@ export const LoginScreen = ({ navigation }) => {
       <Title>ShareCare</Title>
       <AccountContainer>
         <AuthInput
-        
+
           label="Email"
           value={email}
           textContentType="emailAddress"
@@ -51,18 +51,15 @@ export const LoginScreen = ({ navigation }) => {
           />
         </Spacer>
         {error && (
-
-
-
           <ErrorContainer size="large">
             <Text variant="error">{error}</Text>
           </ErrorContainer>
         )}
         <Spacer size="large">
           {!isLoading ? (
-            <TouchableOpacity  style={styles.loginButton} onPress={() => handleLogin()}>
-            <Text style={styles.buttonText}>Login</Text>
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.loginButton} onPress={() => handleLogin()}>
+              <Text style={styles.buttonText}>Login</Text>
+            </TouchableOpacity>
           ) : (
             <ActivityIndicator animating={true} color="#000000" />
           )}

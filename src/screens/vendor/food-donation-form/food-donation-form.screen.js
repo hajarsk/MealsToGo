@@ -3,9 +3,29 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-nativ
 import { SelectList } from 'react-native-dropdown-select-list';
 import { push, ref as databaseRef } from 'firebase/database';
 import { getAuth } from 'firebase/auth';
+import * as Notifications from 'expo-notifications';
 
 import { FIREBASE_DATABASE } from '../../../config/firebase';
-// import { setupNotification } from '../../vendor/notification-list/notification-component';
+//import { setupNotification } from '../../vendor/notification-list/notification-component';
+
+async function schedulePushNotification(pickupTime, pax) {
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: true,
+    }),
+  });
+
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: "Need volunteer🧑‍🤝‍🧑",
+      body: 'Vendor need a volunteer at ' + pickupTime + ' to pickup ' + pax + ' pax of food',
+      data: { data: 'Created Date: ' + new Date().toISOString() },
+    },
+    trigger: { seconds: 1 },
+  });
+}
 
 export const DonationFormScreen = ({ navigation }) => {
   const [selected, setSelected] = useState('');
@@ -14,6 +34,7 @@ export const DonationFormScreen = ({ navigation }) => {
   const [expirationDate, setExpirationDate] = useState('');
   const [pickupTime, setPickupTime] = useState('');
   const [foodConcerns, setFoodConcerns] = useState([]);
+  const [currentUser, setCurrentUser] = useState('');
 
   const handleDonation = async () => {
     try {
@@ -21,7 +42,15 @@ export const DonationFormScreen = ({ navigation }) => {
       const user = auth.currentUser;
 
       const userId = user.uid;
-      const userName = user.displayName;
+
+      const querySnapshot = await getDocs(collection(db, "users"));
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        if (doc.email === user.email) {
+          setCurrentUser(doc.data());
+        }
+      });
+      const userName = currentUser.name;
 
       const postData = {
         status: "pending",
@@ -39,6 +68,7 @@ export const DonationFormScreen = ({ navigation }) => {
       await push(dbRef, postData)
       console.log("data send successful!");
 
+      await schedulePushNotification(pickupTime, quantity);
       setSelected('');
       setQuantity('');
       setWeight('');
@@ -53,10 +83,9 @@ export const DonationFormScreen = ({ navigation }) => {
 
   };
 
-  const currentDate= new Date();
-      const options = { timeZone: 'Asia/Kuala_Lumpur' };
-    const deliveryDate = currentDate.toLocaleString('en-US', options);
-
+  const currentDate = new Date();
+  const options = { timeZone: 'Asia/Kuala_Lumpur' };
+  const deliveryDate = currentDate.toLocaleString('en-US', options);
 
   const data = [
     { key: '1', value: 'Nasi Berlauk' },
@@ -92,9 +121,6 @@ export const DonationFormScreen = ({ navigation }) => {
     { key: '5', value: 'Non-Halal' },
   ];
 
-
-
-
   return (
     <View style={styles.container}>
 
@@ -107,6 +133,8 @@ export const DonationFormScreen = ({ navigation }) => {
             setSelected={(val) => setSelected(val)}
             data={data}
             save="value"
+            canDeselect={true}
+            multiple={false}
           />
         </View>
 
@@ -173,7 +201,6 @@ export const DonationFormScreen = ({ navigation }) => {
         <TouchableOpacity style={styles.donationButton} onPress={handleDonation}>
           <Text style={styles.buttonText}>Submit</Text>
         </TouchableOpacity>
-
 
       </View>
 

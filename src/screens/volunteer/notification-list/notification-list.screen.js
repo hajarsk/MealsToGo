@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity} from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 import { ref, onValue, update, remove } from 'firebase/database';
 
@@ -40,7 +40,7 @@ export const VolunteerNotificationList = ({ navigation }) => {
   };
 
   useEffect(() => {
-    const notificationsRef = ref(FIREBASE_DATABASE, 'notifications');
+    const notificationsRef = ref(FIREBASE_DATABASE, 'Donation_Details');
 
     // Subscribe to changes in the notifications node
     const unsubscribe = onValue(notificationsRef, (snapshot) => {
@@ -83,7 +83,7 @@ export const VolunteerNotificationList = ({ navigation }) => {
   };
 
   // Main component rendering each notification
-  const renderNotification = ({ item }) => {
+  const renderNotification = async ({ item }) => {
     return (
       <Swipeable renderLeftActions={(progress, dragX) => renderLeftActions(progress, dragX, item)}>
         <TouchableOpacity
@@ -91,7 +91,7 @@ export const VolunteerNotificationList = ({ navigation }) => {
           onPress={() => {
             markNotificationAsRead(item);
             navigation.navigate('AcceptDeliveryDetails', {
-               DonationDetails: item,
+              DonationDetails: item,
             });
           }}
         >

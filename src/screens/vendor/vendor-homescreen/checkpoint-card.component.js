@@ -26,7 +26,7 @@ export const CheckpointInfoCard = ({ checkpoint = {} }) => {
     icon = "https://images.macrumors.com/t/iemYuJMly_zkkWqyqXRLrEaqcpI=/1600x/article-new/2019/01/googlemaps.jpg",
     images = [
       "https://www.foodiesfeed.com/wp-content/uploads/2019/06/top-view-for-box-of-2-burgers-home-made-600x899.jpg",
-     
+
     ],
     available = 0,
     total = 0,
@@ -43,7 +43,6 @@ export const CheckpointInfoCard = ({ checkpoint = {} }) => {
   const ProgressBarSlot = () => (
     <ProgressBar progress={progressRatio} theme={{ colors: { primary: '#4FAF5A' } }} />
   );
-
 
   return (
     <CheckpointCard>

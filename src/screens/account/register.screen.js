@@ -4,7 +4,7 @@ import { ActivityIndicator, RadioButton, Button } from "react-native-paper";
 import { SelectList } from 'react-native-dropdown-select-list';
 
 import { FIREBASE_FIRESTORE } from "../../config/firebase";
-import { collection, addDoc as firestoreDoc } from "firebase/firestore"
+import { collection, addDoc as firestoreDoc, getDocs } from "firebase/firestore"
 
 import {
   AccountBackground,
@@ -40,15 +40,16 @@ export const RegisterScreen = ({ navigation }) => {
     name: name,
     email: email,
     college: college,
+    register: false
   }
   const vendorData = {
-    id: Math.floor(Math.random() * 900000) + 100000,
     role: checked,
     name: name,
     email: email,
     brn: brn,
     phoneNumber: phoneNumber,
-    address: address
+    address: address,
+    register: false
   }
   const volunteerData = {
     id: Math.floor(Math.random() * 900000) + 100000,
@@ -56,13 +57,13 @@ export const RegisterScreen = ({ navigation }) => {
     name: name,
     email: email,
     phoneNumber: phoneNumber,
-    associationName: selected
+    associationName: selected,
+    register: false
   }
 
   const sendDataToDatabase = async () => {
 
     const postCollection = collection(FIREBASE_FIRESTORE, "users")
-
 
     try {
       if (checked == "student") {
@@ -182,10 +183,10 @@ export const RegisterScreen = ({ navigation }) => {
             )}
             <Spacer size="large">
               {!isLoading ? (
-                <TouchableOpacity  style={styles.loginButton} onPress={() => sendDataToDatabase()}>
-                <Text style={styles.buttonText}>Sign Up</Text>
-              </TouchableOpacity>
-                
+                <TouchableOpacity style={styles.loginButton} onPress={() => sendDataToDatabase()}>
+                  <Text style={styles.buttonText}>Sign Up</Text>
+                </TouchableOpacity>
+
               ) : (
                 <ActivityIndicator animating={true} color="green" />
               )}
@@ -194,17 +195,17 @@ export const RegisterScreen = ({ navigation }) => {
         )}
         {checked === "Volunteer" && (
           <>
-           <Spacer size="large">
-            <View>
-              <SelectList
+            <Spacer size="large">
+              <View>
+                <SelectList
 
-                placeholder="Select Association"
-                setSelected={(val) => setSelected(val)}
-                data={data}
-                save="value"
+                  placeholder="Select Association"
+                  setSelected={(val) => setSelected(val)}
+                  data={data}
+                  save="value"
 
-              />
-            </View>
+                />
+              </View>
             </Spacer>
             <Spacer size="small">
               <AuthInput
@@ -263,9 +264,9 @@ export const RegisterScreen = ({ navigation }) => {
             )}
             <Spacer size="large">
               {!isLoading ? (
-                <TouchableOpacity  style={styles.loginButton} onPress={() => sendDataToDatabase()}>
-                <Text style={styles.buttonText}>Sign Up</Text>
-              </TouchableOpacity>
+                <TouchableOpacity style={styles.loginButton} onPress={() => sendDataToDatabase()}>
+                  <Text style={styles.buttonText}>Sign Up</Text>
+                </TouchableOpacity>
 
               ) : (
                 <ActivityIndicator animating={true} color="#456876" />
@@ -344,9 +345,9 @@ export const RegisterScreen = ({ navigation }) => {
             )}
             <Spacer size="large">
               {!isLoading ? (
-                <TouchableOpacity  style={styles.loginButton} onPress={() => sendDataToDatabase()}>
-                <Text style={styles.buttonText}>Sign Up</Text>
-              </TouchableOpacity>
+                <TouchableOpacity style={styles.loginButton} onPress={() => sendDataToDatabase()}>
+                  <Text style={styles.buttonText}>Sign Up</Text>
+                </TouchableOpacity>
 
               ) : (
                 <ActivityIndicator animating={true} color="#000000" />

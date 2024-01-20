@@ -1,7 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import styled from "styled-components/native";
 import { Searchbar } from "react-native-paper";
-import { ViewPropTypes } from 'deprecated-react-native-prop-types';
 import { LocationContext } from "../../../services/location/location.context";
 
 const SearchContainer = styled.View`
@@ -15,27 +14,24 @@ export const Search = () => {
   useEffect(() => {
     setSearchKeyword(keyword);
   }, [keyword]);
+
   return (
-    <SearchContainer >
+    <SearchContainer>
       <Searchbar
         placeholder="Search Food Bank"
         placeholderTextColor="#878787"
-        inputStyle={{marginTop:-4}}
+        inputStyle={{ marginTop: -4 }}
         value={searchKeyword}
         // Apply custom styles to the Searchbar
         iconColor="#878787"
-        
-        style={{ 
-          borderRadius: 50, 
-          backgroundColor: '#ffffff', 
-          borderColor:'#D6D6D6',
-          borderWidth:1, 
-          height: 50,  
-          marginBottom:-5,
-          
-        
+        style={{
+          borderRadius: 50,
+          backgroundColor: "#ffffff",
+          borderColor: "#D6D6D6",
+          borderWidth: 1,
+          height: 50,
+          marginBottom: -5,
         }}
-     
         onSubmitEditing={() => {
           search(searchKeyword);
         }}

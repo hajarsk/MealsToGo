@@ -16,6 +16,8 @@ import { FIREBASE_DATABASE } from "../../../config/firebase";
 import { FIREBASE_FIRESTORE } from "../../../config/firebase";
 import { collection, getDocs, query as queryGei, where } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import RegisterUser from "../../../components/registerUser";
+import getAnnouncement from "../../../components/actionStorage";
 
 // Styles and utility components
 const CheckpointList = styled(FlatList).attrs({
@@ -42,12 +44,15 @@ export const StudentCheckpointScreen = ({ navigation }) => {
   const [checkpoints, setCheckpoint] = useState([])
   const [isLoading, setIsLoading] = useState(true);
   const [shouldFetchData, setShouldFetchData] = useState(true);
+  const [announcement, setAnnouncement] = useState([]);
 
   // User information retrieval
   const collectionRef = collection(FIREBASE_FIRESTORE, "users");
   const query = queryGei(collectionRef, where("email", "==", email));
 
   useEffect(() => {
+    const collectionRef = collection(FIREBASE_FIRESTORE, "users");
+    const query = queryGei(collectionRef, where("email", "==", email));
     const fetchData = async () => {
       try {
         const auth = getAuth().currentUser;
@@ -55,20 +60,15 @@ export const StudentCheckpointScreen = ({ navigation }) => {
           setEmail(auth.email);
         }
 
-        // Fetching user data
-        const querySnapshot = await getDocs(query);
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          setName(data["name"]);
-          setRole(data["role"]);
-        });
+        await RegisterUser(query, auth);
 
-        // Fetching checkpoint data if shouldFetchData is true
         if (shouldFetchData) {
-          fetchCollegeData();
-          // Set shouldFetchData to false after the initial fetch
+          setAnnouncement(await getAnnouncement());
+          fetchUserInf();
+          fetchCheckpointData();
           setShouldFetchData(false);
         }
+
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -76,8 +76,17 @@ export const StudentCheckpointScreen = ({ navigation }) => {
 
     fetchData();
   }, [query, shouldFetchData]);
-  
-  const fetchCollegeData = async () => {
+
+  const fetchUserInf = async () => {
+    const querySnapshot = await getDocs(query);
+    querySnapshot.forEach((document) => {
+      const data = document.data();
+      setName(data["name"]);
+      setRole(data["role"]);
+    });
+  }
+
+  const fetchCheckpointData = async () => {
     try {
       setIsLoading(true);
       const dbRef = ref(FIREBASE_DATABASE, 'checkpoint');
@@ -92,17 +101,10 @@ export const StudentCheckpointScreen = ({ navigation }) => {
       setIsLoading(false);
     }
   };
-  
-
-  const ImageSlider = [
-    { id: 1, name: 'ImageSlider 1', imageId: 'https://firebasestorage.googleapis.com/v0/b/mealstogo-df673.appspot.com/o/agihan_foodbank.jpg?alt=media&token=265a8342-b684-4fc7-85b4-0ed13fac0f62' },
-    { id: 2, name: 'ImageSlider 2', imageId: 'https://firebasestorage.googleapis.com/v0/b/mealstogo-df673.appspot.com/o/kotak_foodbank_crop.jpg?alt=media&token=bf7628fc-380c-4908-b2eb-6d3301a0e788' },
-    { id: 3, name: 'ImageSlider 3', imageId: 'https://firebasestorage.googleapis.com/v0/b/mealstogo-df673.appspot.com/o/myfundaction_foodbank.jpeg?alt=media&token=58ae17cd-521f-4b29-ac7a-57e2a5e45475' },
-  ];
 
   // Navigate to screen when slider image is pressed
   const handleImagePress = (index) => {
-    const announcementId = ImageSlider[index].id;
+    const announcementId = announcement[index].id;
     navigation.navigate('Announcement', { announcementId });
   };
 
@@ -142,26 +144,25 @@ export const StudentCheckpointScreen = ({ navigation }) => {
       {/* Slider component */}
       <View style={styles.containerImageSlider}>
         <SliderBox
-          images={ImageSlider.map(item => item.imageId)}
+          images={announcement.map(item => item.imageId) || []}
           paginationBoxStyle={{
             backgroundColor: '#ffffff',
             borderRadius: 20,
             paddingVertical: 10,
             marginBottom: 15,
             paddingHorizontal: 10,
-            alignSelf: 'flex-end',
-            xIndex: 5,
           }}
           onCurrentImagePressed={index => handleImagePress(index)}
-          sliderBoxHeight={180} // Height of the slider
+          sliderBoxHeight={180}
           parentWidth={359}
           borderRadius={10}
           resizeMode="cover"
           dotColor="#4FAF5A"
           dotStyle={{ width: 20, height: 5, marginHorizontal: -7 }}
-          inactiveDotColor="#e8e8e8" // Light grey- #E8E8E8, GREY - #90A4AE
+          inactiveDotColor="#e8e8e8"
           autoplay
           circleLoop
+          autoplayInterval={3000}
         />
       </View>
 
@@ -204,7 +205,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
     borderRadius: 10, // Adjust this value to control the roundness of the edges
     padding: 6,
-    
+
   },
   containerImageSlider: {
     marginTop: 18,
@@ -261,4 +262,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
     fontWeight: 'bold',
-  },});
+  },
+});

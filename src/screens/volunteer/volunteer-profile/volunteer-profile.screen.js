@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Divider,Card, Avatar} from 'react-native-paper';
+import { Divider, Card, Avatar } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import { TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { getAuth,onAuthStateChanged } from 'firebase/auth';
-import { ref} from 'firebase/database';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { ref } from 'firebase/database';
 import { MaterialIcons } from '@expo/vector-icons';
-
 import { FIREBASE_FIRESTORE } from '../../../config/firebase';
 import { collection, getDocs, query as queryGei, where } from "firebase/firestore";
+import { AuthenticationContext } from '../../../services/authentication/authentication.context';
 
 export const VolunteerProfileScreen = () => {
+  const { onLogout } = useContext(AuthenticationContext);
   const [profileImage, setProfileImage] = useState("");
   const [expanded, setExpanded] = useState(true);
   const [name, setName] = useState("");
@@ -20,8 +21,7 @@ export const VolunteerProfileScreen = () => {
   const navigation = useNavigation();
   const user = getAuth();
   const handlePress = () => setExpanded(!expanded);
-  
-  
+
   // User information retrieval
   const collectionRef = collection(FIREBASE_FIRESTORE, "users");
   const query = queryGei(collectionRef, where("email", "==", email));
@@ -33,19 +33,19 @@ export const VolunteerProfileScreen = () => {
         if (auth) {
           setEmail(auth.email);
         }
-  
+
         // Fetching user data
         const querySnapshot = await getDocs(query);
         querySnapshot.forEach((doc) => {
           const data = doc.data();
           setName(data["name"]);
         });
-  
+
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
-  
+
     fetchData();
   }, [query]);
 
@@ -70,23 +70,23 @@ export const VolunteerProfileScreen = () => {
 
       {/* profile header */}
       <View style={styles.headerSection}>
-      <Card style={{ flex: 1, backgroundColor: '#f5f5f5', justifyContent: 'center', alignItems: 'center' }}>
+        <Card style={{ flex: 1, backgroundColor: '#f5f5f5', justifyContent: 'center', alignItems: 'center' }}>
           <Card.Content >
             <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-            <View style={{paddingBottom:40}}>
-            <TouchableOpacity >
-             
-              
-              {!profileImage && <Avatar.Icon icon="account" style={styles.profileImage} />}
-             
-            </TouchableOpacity>
-            
-            </View>
-            
-            <View style={styles.titleContainer}>
-              <Text style={styles.title}>{name}</Text>
-              <Text style={styles.titleEmail}>{email}</Text>
-            </View>
+              <View style={{ paddingBottom: 40 }}>
+                <TouchableOpacity >
+
+
+                  {!profileImage && <Avatar.Icon icon="account" style={styles.profileImage} />}
+
+                </TouchableOpacity>
+
+              </View>
+
+              <View style={styles.titleContainer}>
+                <Text style={styles.title}>{name}</Text>
+                <Text style={styles.titleEmail}>{email}</Text>
+              </View>
             </View>
           </Card.Content>
         </Card>
@@ -95,23 +95,23 @@ export const VolunteerProfileScreen = () => {
       <View style={styles.thickLine} />
 
       <View style={styles.bodySection}>
-        
-          <Text style={styles.headerStyle}>Profile Info</Text>
-        
+
+        <Text style={styles.headerStyle}>Profile Info</Text>
+
         <Divider style={styles.divider} />
-        
-        <TouchableOpacity  style={styles.loginButton} onPress={() =>
-            navigation.navigate("MyDelivery")
-          }>
-            <Text style={styles.buttonText}>MyDelivery</Text>
-          </TouchableOpacity>
+
+        <TouchableOpacity style={styles.loginButton} onPress={() =>
+          navigation.navigate("MyDelivery")
+        }>
+          <Text style={styles.buttonText}>MyDelivery</Text>
+        </TouchableOpacity>
         <Divider style={styles.divider} />
         <Text style={styles.bodyStyle}>Settings</Text>
         <Divider style={styles.divider} />
         <Text style={styles.bodyStyle}>About Us</Text>
         <Divider style={styles.divider} />
-        <TouchableOpacity  style={styles.loginButton}>
-        <Text style={styles.bodyStyle}>Logout</Text>
+        <TouchableOpacity style={styles.loginButton} onPress={onLogout}>
+          <Text style={styles.bodyStyle}>Logout</Text>
         </TouchableOpacity>
       </View>
 
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
     borderColor: '#4FAF5A',
     marginTop: 5,
     borderRadius: 10,
-   
+
   },
   buttonText: {
     color: '#000000',

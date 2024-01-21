@@ -5,7 +5,8 @@ import { push, ref as databaseRef } from 'firebase/database';
 import { getAuth } from 'firebase/auth';
 import * as Notifications from 'expo-notifications';
 
-import { FIREBASE_DATABASE } from '../../../config/firebase';
+import { FIREBASE_DATABASE, FIREBASE_FIRESTORE } from '../../../config/firebase';
+import { collection, getDoc, getDocs, query, where } from 'firebase/firestore';
 //import { setupNotification } from '../../vendor/notification-list/notification-component';
 
 async function schedulePushNotification(pickupTime, pax) {
@@ -34,28 +35,19 @@ export const DonationFormScreen = ({ navigation }) => {
   const [expirationDate, setExpirationDate] = useState('');
   const [pickupTime, setPickupTime] = useState('');
   const [foodConcerns, setFoodConcerns] = useState([]);
-  const [currentUser, setCurrentUser] = useState('');
 
   const handleDonation = async () => {
     try {
       const auth = getAuth();
       const user = auth.currentUser;
-
       const userId = user.uid;
-
-      const querySnapshot = await getDocs(collection(db, "users"));
-      querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        if (doc.email === user.email) {
-          setCurrentUser(doc.data());
-        }
-      });
-      const userName = currentUser.name;
+      const vendorData = await getUserName(userId);
 
       const postData = {
         status: "pending",
         userId: userId,
-        userName: userName,
+        userName: vendorData.name,
+        vendorAddress: vendorData.address,
         foodItem: selected,
         quantity: quantity,
         weight: weight,
@@ -81,6 +73,17 @@ export const DonationFormScreen = ({ navigation }) => {
       console.error(error)
     }
 
+  };
+
+  const getUserName = async (userId) => {
+    const q = query(collection(FIREBASE_FIRESTORE, "users"), where("id", "==", userId)); // Use "uid" to match the user ID
+    const querySnapshot = await getDocs(q);
+
+    let currentUser = null;
+    querySnapshot.forEach((doc) => {
+      currentUser = doc.data();
+    });
+    return currentUser;
   };
 
   const currentDate = new Date();

@@ -3,10 +3,11 @@ import { Text, View, StyleSheet, Button } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { FIREBASE_FIRESTORE } from '../../../config/firebase';
 import { getAuth } from 'firebase/auth';
-import { doc, setDoc,addDoc,collection } from "firebase/firestore"; 
+import { doc, setDoc, addDoc, collection } from "firebase/firestore";
+import { get, getDatabase, ref, update } from 'firebase/database';
 
 
-export const ScanScreen = () => {
+export const ScanScreen = ({ navigation }) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
 
@@ -21,7 +22,6 @@ export const ScanScreen = () => {
 
   const handleBarCodeScanned = async ({ type, data }) => {
     setScanned(true);
-    alert(`QR code has been scanned!`);
 
     try {
       const auth = getAuth();
@@ -37,12 +37,31 @@ export const ScanScreen = () => {
       // Add a new document in the "Scans" collection
       const docRef = await addDoc(collection(FIREBASE_FIRESTORE, "TrackFoodQuantity"), {
         userId: userId,
-        email: email,
         scanDate: scanDate,
-        scanData: data, // Save the scanned QR code data
+        checkpoint: data, // Save the scanned QR code data
       });
 
-      console.log("Scan data sent successfully!");
+      const dbRef = getDatabase();
+      const checkpointRef = ref(dbRef, `/checkpoint/${data}`);
+      const snapshot = await get(checkpointRef);
+
+      if (snapshot.exists()) {
+        const checkpointData = snapshot.val();
+        if (checkpointData.available <= 0) {
+          alert(`Checkpoint: ${data}\nNo food available`);
+          return;
+        } else {
+          await update(checkpointRef, {
+            available: parseInt(checkpointData.available) - 1,
+          });
+          alert(`Thank you for delivering the food to ${data} checkpoint!`);
+          navigation.goBack();
+        }
+      } else {
+        alert(`Checkpoint not found. This is not the expected ${data} checkpoint!`);
+      }
+
+      alert(`Checkpoint: ${data}\nEnjoy your food!`);
 
       // Perform any navigation or additional actions as needed
       // navigation.navigate('YourTargetScreen'); 
@@ -58,19 +77,18 @@ export const ScanScreen = () => {
     return <Text style={styles.text}>No access to camera</Text>;
   }
 
-  
   return (
     <View style={styles.container}>
-    <BarCodeScanner
-      onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-      style={StyleSheet.absoluteFillObject}
-    />
-    {scanned && (
-      <View >
-        <Button title={'Tap to Scan Again'} onPress={() => setScanned(false)} />
-      </View>
-    )}
-  </View>
+      <BarCodeScanner
+        onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+        style={StyleSheet.absoluteFillObject}
+      />
+      {scanned && (
+        <View >
+          <Button title={'Tap to Scan Again'} onPress={() => setScanned(false)} />
+        </View>
+      )}
+    </View>
   );
 };
 
@@ -88,6 +106,6 @@ const styles = StyleSheet.create({
     color: '#333',
     marginTop: 20,
   },
-  
+
 });
 

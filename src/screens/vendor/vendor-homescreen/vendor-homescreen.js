@@ -46,9 +46,6 @@ export const VendorCheckpointScreen = ({ navigation }) => {
   const query = queryGei(collectionRef, where("email", "==", email));
 
   useEffect(() => {
-    const collectionRef = collection(FIREBASE_FIRESTORE, "users");
-    const query = queryGei(collectionRef, where("email", "==", email));
-
     const fetchData = async () => {
       try {
         const auth = getAuth().currentUser;
@@ -57,12 +54,11 @@ export const VendorCheckpointScreen = ({ navigation }) => {
         }
 
         await RegisterUser(query, auth);
-
         if (shouldFetchData) {
+          setShouldFetchData(false);
           setAnnouncement(await getAnnouncement());
           fetchUserInf();
           fetchCheckpointData();
-          setShouldFetchData(false);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -71,6 +67,7 @@ export const VendorCheckpointScreen = ({ navigation }) => {
 
     fetchData();
   }, [query, shouldFetchData]);
+
 
   const fetchUserInf = async () => {
     const querySnapshot = await getDocs(query);
@@ -111,14 +108,6 @@ export const VendorCheckpointScreen = ({ navigation }) => {
       <View style={styles.containerHeaderUser}>
         <View style={{ flex: 1 }}>
           <Text style={styles.userHeader}>Hi {name},</Text>
-        </View>
-        <View style={styles.containerHeaderIcon}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("StudentNotificationList")}
-          >
-            <MaterialIcons name="notifications-none" size={26} color="black" />
-            <Badge size={9} style={{ position: 'absolute', top: 3, right: 4 }}></Badge>
-          </TouchableOpacity>
         </View>
       </View>
 
@@ -193,7 +182,7 @@ const styles = StyleSheet.create({
     paddingRight: 30,
   },
   containerHeaderRole: {
-    marginTop: -10,
+    marginTop: -7,
     paddingHorizontal: 20,
     flexDirection: 'row',
     marginBottom: 0,

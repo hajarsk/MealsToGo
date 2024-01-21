@@ -70,34 +70,31 @@ export const MyDonationScreen = ({ navigation }) => {
                           <Text style={styles.bodyStyle}>{item.pickupTime}</Text>
                         </Spacer>
                       </View>
-                      
+
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <View>
-
-                      <Spacer size="small">
-                        <Text style={styles.subHeaderStyle}>Food Item:</Text>
-                        <Text style={styles.bodyStyle}>{item.quantity}x {item.foodItem}</Text>
-                      </Spacer>
+                      <View>
+                        <Spacer size="small">
+                          <Text style={styles.subHeaderStyle}>Food Item:</Text>
+                          <Text style={styles.bodyStyle}>{item.quantity}x {item.foodItem}</Text>
+                        </Spacer>
+                      </View>
                     </View>
-                    <View style={{ alignContent: 'flex-end' }}>
-                      {item.status === 'track' ? (
-                        <Button
-                          style={{ backgroundColor: '#cccccc', borderColor: '#ffffff' }}
-                          labelStyle={{ color: '#ffffff' }}
-                        >
-                          Pending
-                        </Button>
-                      ) : (
-                        <Button
-                          style={{ backgroundColor: '#4faf5a', borderColor: '#ffffff' }}
-                          labelStyle={{ color: '#ffffff' }}
-                          onPress={() => navigation.navigate('Map')}
-                        >
-                          Track
-                        </Button>
-                      )}
-                    </View>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                      <View style={{ alignContent: 'flex-end' }}>
+                        <Spacer size="small">
+                          <Text style={styles.subHeaderStyle}>Status</Text>
+                          {item.status === 'pending' ? (
+                            <Text>Your donation request is {item.status}</Text>
+                          ) : item.status === 'accepted' ? (
+                            <Text>Your donation request has been {item.status}</Text>
+                          ) : item.status === 'delivered' ? (
+                            <Text>Your donation has been {item.status}</Text>
+                          ) : (
+                            <Text>Track</Text>
+                          )}
+                        </Spacer>
+                      </View>
                     </View>
 
                     {item.showDetails && (
@@ -106,7 +103,15 @@ export const MyDonationScreen = ({ navigation }) => {
                         <Divider style={styles.divider} />
 
                         <Text style={styles.subHeaderStyle}>Deliver Food To:</Text>
-                        <Text style={styles.bodyStyle}>Universiti Putra Malaysia</Text>
+                        {item.status === 'pending' ? (
+                          <Text>No checkpoint has been allocated yet</Text>
+                        ) : item.status === 'accepted' ? (
+                          <Text>{item.checkpoint}, Universiti Putra Malaysia</Text>
+                        ) : item.status === 'delivered' ? (
+                          <Text>{item.checkpoint}, Universiti Putra Malaysia</Text>
+                        ) : (
+                          <Text>Track</Text>
+                        )}
 
 
 

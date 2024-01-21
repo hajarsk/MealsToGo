@@ -12,7 +12,7 @@ import { VolunteerProfileScreen } from "../screens/volunteer/volunteer-profile/v
 import { MyDeliveryScreen } from "../screens/volunteer/my-delivery/my-delivery.screen"
 import { VolunteerNotificationList } from "../screens/volunteer/notification-list/notification-list.screen";
 import { AcceptDeliveryDetailsScreen } from "../screens/volunteer/accept-delivery-detail/accept-delivery-detail";
-import { UploadPhotoScreen} from "../screens/volunteer/upload-photo-proof/upload-photo.screen"
+import { UploadPhotoScreen } from "../screens/volunteer/upload-photo-proof/upload-photo.screen"
 
 
 //drawer and card
@@ -21,7 +21,7 @@ const VolunteerStack = createStackNavigator();
 export const VolunteerNavigator = () => {
   return (
     <VolunteerStack.Navigator
-    headerShown="false"
+      headerShown="false"
       screenOptions={{
         ...TransitionPresets.ModalPresentationIOS,
       }}
@@ -31,9 +31,9 @@ export const VolunteerNavigator = () => {
         name="VolunteerCheckpoint"
         component={VolunteerCheckpointScreen}
       />
-       <VolunteerStack.Screen
+      <VolunteerStack.Screen
         name="VolunteerCheckpointDetail"
-        component={VolunteerCheckpointDetailScreen}     
+        component={VolunteerCheckpointDetailScreen}
       />
       <VolunteerStack.Screen
         name="Announcement"
@@ -56,10 +56,10 @@ export const VolunteerNavigator = () => {
         component={AcceptDeliveryDetailsScreen}
       />
       <VolunteerStack.Screen
-        name="UploadPhoto"
+        name="Scan Qr at Checkpoint"
         component={UploadPhotoScreen}
       />
-      
+
     </VolunteerStack.Navigator>
   );
 };

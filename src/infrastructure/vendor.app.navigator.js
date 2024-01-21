@@ -1,13 +1,9 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialIcons, AntDesign, FontAwesome } from "@expo/vector-icons";
-
 import { VendorNavigator } from "./vendor.navigator";
 import { VendorProfileScreen } from "../screens/vendor/vendor-profile/vendor-profile.screen";
 import { DonationFormScreen } from "../screens/vendor/food-donation-form/food-donation-form.screen"
-
-
-
 //bottom bar setup on app
 
 const Tab = createBottomTabNavigator();
@@ -20,7 +16,7 @@ const TAB_ICON = {
 
 const createScreenOptions = ({ route }) => {
   let tabBarIconComponent;
-
+  console.log("Hi", route.name);
   // Conditionally set the icon based on the route name
   if (route.name === 'Donate') {
     tabBarIconComponent = ({ color }) => (

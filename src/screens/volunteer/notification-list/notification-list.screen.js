@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 import { ref, onValue, update, remove } from 'firebase/database';
-
 import { FIREBASE_DATABASE } from '../../../config/firebase';
-
 
 export const VolunteerNotificationList = ({ navigation }) => {
   const [notifications, setNotifications] = useState([]);
@@ -39,21 +37,23 @@ export const VolunteerNotificationList = ({ navigation }) => {
       });
   };
 
+
   useEffect(() => {
     const notificationsRef = ref(FIREBASE_DATABASE, 'Donation_Details');
+
+    console.log("Im here!");
 
     // Subscribe to changes in the notifications node
     const unsubscribe = onValue(notificationsRef, (snapshot) => {
       if (snapshot.exists()) {
-        // Convert the snapshot value to an array and update the state
-        const notificationsArray = Object.values(snapshot.val()).map((item) => ({
+        // Convert the snapshot value to an array and filter notifications with status 'pending'
+        const notificationsArray = Object.entries(snapshot.val()).map(([key, item]) => ({
+          id: key, // Assuming the key is the unique identifier for each document
           ...item,
           read: item.read || false, // Default to false if "read" property doesn't exist
-        }));
+        })).filter(notification => notification.status === 'pending');
+
         setNotifications(notificationsArray);
-      } else {
-        // Handle the case when there are no notifications
-        setNotifications([]);
       }
     });
 
@@ -70,6 +70,7 @@ export const VolunteerNotificationList = ({ navigation }) => {
       outputRange: [0, 0, 0, 1],
     });
 
+
     return (
       <TouchableOpacity
         style={{ flex: 1, backgroundColor: 'red', justifyContent: 'center', alignItems: 'flex-start' }}
@@ -83,15 +84,17 @@ export const VolunteerNotificationList = ({ navigation }) => {
   };
 
   // Main component rendering each notification
-  const renderNotification = async ({ item }) => {
+  const renderNotification = ({ item }) => {
     return (
       <Swipeable renderLeftActions={(progress, dragX) => renderLeftActions(progress, dragX, item)}>
         <TouchableOpacity
           activeOpacity={0.7}
           onPress={() => {
-            markNotificationAsRead(item);
+            const documentPath = `/Donation_Details/${item.id}`;
+
             navigation.navigate('AcceptDeliveryDetails', {
               DonationDetails: item,
+              DocumentPath: documentPath,
             });
           }}
         >
@@ -101,9 +104,9 @@ export const VolunteerNotificationList = ({ navigation }) => {
               { backgroundColor: item.read ? '#cccccc' : '#ffffff' }, // Apply gray or white background based on read status
             ]}
           >
-            <View style={{}}>
-              <Text style={styles.title}>{item.title}</Text>
-              <Text style={styles.body}>{item.body}</Text>
+            <View>
+              <Text style={styles.title}>{item.userName}</Text>
+              <Text style={styles.body}>Request for volunteer at {item.pickupTime}</Text>
             </View>
           </View>
         </TouchableOpacity>

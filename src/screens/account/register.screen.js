@@ -49,6 +49,7 @@ export const RegisterScreen = ({ navigation }) => {
     brn: brn,
     phoneNumber: phoneNumber,
     address: address,
+    verify: false,
     register: false
   }
   const volunteerData = {

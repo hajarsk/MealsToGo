@@ -24,7 +24,15 @@ export const AcceptDeliveryDetailsScreen = ({ route, navigation }) => {
   const [selected, setSelected] = useState([]);
   const [volunteer, setVolunteer] = useState([]);
   const [selectedVolunteer, setSelectedVolunteer] = useState(true);
+  const [isSelectionValid, setIsSelectionValid] = useState(false);
   const { DonationDetails, DocumentPath } = route.params;
+
+  useEffect(() => {
+    // Check your conditions here and update isSelectionValid accordingly
+    const isFoodBankSelected = selectedFoodBank !== null;
+    const isVolunteerSelected = selectedVolunteer !== null;
+    setIsSelectionValid(isFoodBankSelected && isVolunteerSelected);
+  }, [selectedFoodBank, selectedVolunteer]);
 
   const auth = getAuth();
   const user = auth.currentUser;
@@ -39,7 +47,7 @@ export const AcceptDeliveryDetailsScreen = ({ route, navigation }) => {
         volunteerID: selected,
         status: "accepted",
       })
-      console.log("Donation details updated successfully!");
+      alert("You successfully accepted this delivery!");
       navigation.goBack();
 
     } catch (error) {
@@ -158,7 +166,6 @@ export const AcceptDeliveryDetailsScreen = ({ route, navigation }) => {
               </View>
             </Spacer>
             <Card.Actions>
-              <Button style={{ borderColor: '#4faf5a' }} labelStyle={{ color: '#4faf5a' }}>Decline</Button>
               <Button onPress={handleAccept} style={{ backgroundColor: '#4faf5a' }}>Accept</Button>
             </Card.Actions>
           </Card.Content>
@@ -255,12 +262,18 @@ export const AcceptDeliveryDetailsScreen = ({ route, navigation }) => {
                       setSelected={(val) => setSelected(val)}
                       data={volunteer}
                       save="volunteerId"
+                      defaultOption={volunteer[0]}
                     />
                   </View>
 
                   <Pressable
-                    style={[styles.button, styles.buttonClose]}
-                    onPress={() => handleCloseModal()}>
+                    style={[
+                      styles.button,
+                      styles.buttonClose,
+                      !isSelectionValid && styles.disabledButton, // Apply a different style when disabled
+                    ]}
+                    onPress={() => handleCloseModal()}
+                    disabled={!isSelectionValid}>
                     <Text style={styles.textStyle}>Save</Text>
                   </Pressable>
                 </View>
@@ -368,6 +381,10 @@ const styles = StyleSheet.create({
   buttonClose: {
     backgroundColor: '#4faf5a',
     paddingHorizontal: 30
+  },
+  disabledButton: {
+    backgroundColor: 'gray', // Change this to the color you want for disabled state
+    // You can also add more styles for the disabled state
   },
   textStyle: {
     color: 'white',

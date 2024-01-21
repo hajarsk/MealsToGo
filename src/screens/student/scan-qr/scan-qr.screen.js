@@ -54,14 +54,12 @@ export const ScanScreen = ({ navigation }) => {
           await update(checkpointRef, {
             available: parseInt(checkpointData.available) - 1,
           });
-          alert(`Thank you for delivering the food to ${data} checkpoint!`);
+          alert(`Checkpoint: ${data}\nEnjoy your food!`);
           navigation.goBack();
         }
       } else {
         alert(`Checkpoint not found. This is not the expected ${data} checkpoint!`);
       }
-
-      alert(`Checkpoint: ${data}\nEnjoy your food!`);
 
       // Perform any navigation or additional actions as needed
       // navigation.navigate('YourTargetScreen'); 
